@@ -6,16 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.anychart.AnyChart
 import com.anychart.AnyChartView
 import com.anychart.chart.common.dataentry.DataEntry
-import com.anychart.chart.common.dataentry.ValueDataEntry
 import com.example.sih.R
+import com.example.sih.database.ScoreDatabase
 import com.example.sih.databinding.FragmentHistoryBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HistoryFragment : Fragment(){
 
     private lateinit var binding : FragmentHistoryBinding
+    private lateinit var viewModel: HistoryViewModel
+    private lateinit var viewModelFactory : HistoryViewModelFactory
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,34 +32,33 @@ class HistoryFragment : Fragment(){
         binding = DataBindingUtil.inflate(
             inflater,R.layout.fragment_history,container,false
         )
+        val application = requireNotNull(this.activity).application
+        val dataSource = ScoreDatabase.getInstance(application).scoreDatabaseDao
+        viewModelFactory = HistoryViewModelFactory(dataSource,application)
+        viewModel = ViewModelProvider(this,viewModelFactory).get(HistoryViewModel::class.java)
         binding.lifecycleOwner=this
+        val anyChartView = binding.historyChart
 
-    val anyChartView = binding.historyChart
-        val chart = AnyChart.bar()
+        val date =   SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(this)
 
-        val data : MutableList<DataEntry> = mutableListOf()
-        data.apply {
-            add(ValueDataEntry("P1",100))
-            add(ValueDataEntry("P2",200))
-            add(ValueDataEntry("P3",15))
-            add(ValueDataEntry("P4",130))
-            add(ValueDataEntry("P5",153))
-            add(ValueDataEntry("P6",120))
-            add(ValueDataEntry("P7",151))
-            add(ValueDataEntry("P8",58))
-            add(ValueDataEntry("P9",19))
-            add(ValueDataEntry("P10",135))
-            add(ValueDataEntry("P11",170))
-            add(ValueDataEntry("P12",195))
-            add(ValueDataEntry("P13",22))
-            add(ValueDataEntry("P14",175))
-            add(ValueDataEntry("P15",120))
+        viewModel.getScores(date)
+
+        viewModel.notesReceived.observe(viewLifecycleOwner, Observer {
+            it->if(it==true){
+            plot(viewModel.scores,anyChartView)
+            viewModel.graphPlotted()
         }
-
-        chart.data(data)
-        anyChartView.setChart(chart)
+        })
 
         return binding.root
+
+    }
+
+    private fun plot(data : MutableList<DataEntry>, chartView : AnyChartView){
+
+        val chart = AnyChart.bar()
+        chart.data(data)
+        chartView.setChart(chart)
 
     }
 }
