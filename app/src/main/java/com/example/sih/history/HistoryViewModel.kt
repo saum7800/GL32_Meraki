@@ -28,7 +28,6 @@ class HistoryViewModel(
 
         uiScope.launch {
             getScoresDB(date)
-
             chart.xAxis.valueFormatter = IndexAxisValueFormatter(xValues)
             chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
             set = BarDataSet(scores,"BarDataSet")

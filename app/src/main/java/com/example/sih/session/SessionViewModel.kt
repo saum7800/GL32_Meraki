@@ -31,28 +31,18 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 ): AndroidViewModel(application){
 
     var teachName = ""
-    private lateinit var set : BarDataSet
+    //private lateinit var set : BarDataSet
     private val fireBaseDatabase = Firebase.database
     private var teacherRef = fireBaseDatabase.reference.child("nameList").child("teacher_name")
     private var viewModelJob = Job()
     private var uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private var scores : MutableList<BarEntry> = mutableListOf()
-    private var _scoresChanged = MutableLiveData<Boolean>()
-    val scoresChanged : LiveData<Boolean>
-        get() = _scoresChanged
+    private var students : HashMap<String, Float> = hashMapOf()
+    var index = 0
 
     init {
-        val X : List<String> = listOf("X","Z","A","B")
-        var i=0f
-        for(x in X){
-            scores.add(BarEntry(i, (1..10).random().toFloat()))
-            i+=1
-        }
-        chart.xAxis.valueFormatter = IndexAxisValueFormatter(X)
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        set = BarDataSet(scores,"BarDataSet")
-        set.valueTextSize = 12f
-        chart.data = BarData(set)
+        chart.animateY(3000)
         val xl = chart.xAxis
         xl.setDrawGridLines(false)
         xl.setAvoidFirstLastClipping(true)
@@ -61,14 +51,16 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         val yr = chart.axisRight
         yr.setDrawGridLines(false)
         chart.invalidate()
-
     }
 
     private fun plot(){
-        set = BarDataSet(scores, "BarDataSet")
+        chart.refreshDrawableState()
+        chart.xAxis.valueFormatter = IndexAxisValueFormatter(students.keys)
+        val set = BarDataSet(scores, "Student Set")
         chart.data = BarData(set)
         chart.notifyDataSetChanged()
         chart.invalidate()
+
     }
 
     fun readFireBase(){
@@ -104,7 +96,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
         var myRef = fireBaseDatabase.reference.child("nameList").child("teacher_name")
         myRef = fireBaseDatabase.reference.child(teachName.toString())
-        val movingScores = HashMap<String, Long>()
+        val movingScores = HashMap<String, Double>()
 
         val childEventListener = object : ChildEventListener{
             override fun onCancelled(error: DatabaseError) {
@@ -117,25 +109,34 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val value = snapshot.key
-                val k = snapshot.getValue<ArrayList<Long>>()
+                val k = snapshot.getValue<Double>()
                 if(k != null){
                     if (value != null) {
                         val oldAvg : Long = movingScores[value.toString()]?.toLong() ?: 0
-                        val avg  = oldAvg + (k[k.size - 1] - oldAvg)/100
+                        val avg  = k.toDouble()
+                        movingScores[value.toString()] = avg
+                        scores[students[value.toString()]?.toInt()!!]=
+                            students[value.toString()]?.let { BarEntry(it,avg.toFloat()) }!!
+                        plot()
                     }
                 }
-
                 Log.d(TAG, "Value is : $value, $k")
             }
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val value = snapshot.key
-                val k = snapshot.getValue<ArrayList<Long>>()
+                val k = snapshot.getValue<Double>()
                 if(k != null){
-                    val avg = (k.sum())/(k.size)
+                    val avg = k.toDouble()
                     movingScores[value.toString()] = avg
-
-
+                    students[value.toString()] = index.toFloat()
+                    students[value.toString()]?.let { BarEntry(it,avg.toFloat()) }?.let {
+                        scores.add(
+                            it
+                        )
+                    }
+                    index+=1
+                    plot()
                 }
                 Log.d(TAG, "Value is : $value, $k")
             }
