@@ -71,7 +71,6 @@ dependencies {
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-
     //Material
     implementation 'com.google.android.material:material:1.3.0-alpha02'
     //Notifications
@@ -80,7 +79,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:17.4.4'
     implementation 'com.google.firebase:firebase-database-ktx:19.3.1'
     implementation 'android.arch.work:work-runtime:1.0.1'
-
-
-
+    //MP charts
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 }

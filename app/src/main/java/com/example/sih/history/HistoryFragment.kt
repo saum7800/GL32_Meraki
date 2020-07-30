@@ -14,6 +14,7 @@ import com.anychart.chart.common.dataentry.DataEntry
 import com.example.sih.R
 import com.example.sih.database.ScoreDatabase
 import com.example.sih.databinding.FragmentHistoryBinding
+import com.github.mikephil.charting.charts.BarChart
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,6 +23,7 @@ class HistoryFragment : Fragment(){
     private lateinit var binding : FragmentHistoryBinding
     private lateinit var viewModel: HistoryViewModel
     private lateinit var viewModelFactory : HistoryViewModelFactory
+    private lateinit var chart : BarChart
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,31 +36,15 @@ class HistoryFragment : Fragment(){
         )
         val application = requireNotNull(this.activity).application
         val dataSource = ScoreDatabase.getInstance(application).scoreDatabaseDao
-        viewModelFactory = HistoryViewModelFactory(dataSource,application)
+        val chart = binding.historyChart
+        viewModelFactory = HistoryViewModelFactory(dataSource,application,chart)
         viewModel = ViewModelProvider(this,viewModelFactory).get(HistoryViewModel::class.java)
         binding.lifecycleOwner=this
-        val anyChartView = binding.historyChart
 
-        val date =   SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(this)
-
-        viewModel.getScores(date)
-
-        viewModel.notesReceived.observe(viewLifecycleOwner, Observer {
-            it->if(it==true){
-            plot(viewModel.scores,anyChartView)
-            viewModel.graphPlotted()
-        }
-        })
-
+        //val date =   SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(this)
+        viewModel.getScores("")
         return binding.root
 
     }
 
-    private fun plot(data : MutableList<DataEntry>, chartView : AnyChartView){
-
-        val chart = AnyChart.bar()
-        chart.data(data)
-        chartView.setChart(chart)
-
-    }
 }
