@@ -104,7 +104,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
         var myRef = fireBaseDatabase.reference.child("nameList").child("teacher_name")
         myRef = fireBaseDatabase.reference.child(teachName.toString())
-        val movingScores = HashMap<String, ArrayList<Long>>()
+        val movingScores = HashMap<String, Long>()
 
         val childEventListener = object : ChildEventListener{
             override fun onCancelled(error: DatabaseError) {
@@ -120,9 +120,11 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                 val k = snapshot.getValue<ArrayList<Long>>()
                 if(k != null){
                     if (value != null) {
-                        movingScores[value]?.add(k[k.size - 1])
+                        val oldAvg : Long = movingScores[value.toString()]?.toLong() ?: 0
+                        val avg  = oldAvg + (k[k.size - 1] - oldAvg)/100
                     }
                 }
+
                 Log.d(TAG, "Value is : $value, $k")
             }
 
@@ -130,12 +132,10 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                 val value = snapshot.key
                 val k = snapshot.getValue<ArrayList<Long>>()
                 if(k != null){
-                    if(!movingScores.containsKey(value)){
-                        movingScores[value.toString()] = k
-                    }
-                    else{
-                        movingScores[value.toString()] = k
-                    }
+                    val avg = (k.sum())/(k.size)
+                    movingScores[value.toString()] = avg
+
+
                 }
                 Log.d(TAG, "Value is : $value, $k")
             }
