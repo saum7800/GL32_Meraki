@@ -31,7 +31,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 ): AndroidViewModel(application){
 
     var teachName = ""
-    //private lateinit var set : BarDataSet
+    private lateinit var set : BarDataSet
     private val fireBaseDatabase = Firebase.database
     private var teacherRef = fireBaseDatabase.reference.child("nameList").child("teacher_name")
     private var viewModelJob = Job()
@@ -44,6 +44,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         chart.animateY(3000)
         val xl = chart.xAxis
+        xl.labelCount=5
         xl.setDrawGridLines(false)
         xl.setAvoidFirstLastClipping(true)
         val yl = chart.axisLeft
@@ -56,7 +57,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
     private fun plot(){
         chart.refreshDrawableState()
         chart.xAxis.valueFormatter = IndexAxisValueFormatter(students.keys)
-        val set = BarDataSet(scores, "Student Set")
+        set = BarDataSet(scores, "Student Set")
         chart.data = BarData(set)
         chart.notifyDataSetChanged()
         chart.invalidate()
