@@ -37,7 +37,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
     private var viewModelJob = Job()
     private var uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private var scores : MutableList<BarEntry> = mutableListOf()
-    private var students : HashMap<String, Float> = hashMapOf()
+    private var students : HashMap<String, Int> = hashMapOf()
     var index = 0
 
     init {
@@ -61,7 +61,6 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         chart.data = BarData(set)
         chart.notifyDataSetChanged()
         chart.invalidate()
-
     }
 
     fun readFireBase(){
@@ -116,8 +115,8 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                         val oldAvg : Long = movingScores[value.toString()]?.toLong() ?: 0
                         val avg  = k.toDouble()
                         movingScores[value.toString()] = avg
-                        scores[students[value.toString()]?.toInt()!!]=
-                            students[value.toString()]?.let { BarEntry(it,avg.toFloat()) }!!
+                        scores[students[value.toString()]!!]=
+                            students[value.toString()]?.let { BarEntry(it.toFloat(),avg.toFloat()) }!!
                         plot()
                     }
                 }
@@ -130,8 +129,8 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                 if(k != null){
                     val avg = k.toDouble()
                     movingScores[value.toString()] = avg
-                    students[value.toString()] = index.toFloat()
-                    students[value.toString()]?.let { BarEntry(it,avg.toFloat()) }?.let {
+                    students[value.toString()] = index
+                    students[value.toString()]?.let { BarEntry(it.toFloat(),avg.toFloat()) }?.let {
                         scores.add(
                             it
                         )
