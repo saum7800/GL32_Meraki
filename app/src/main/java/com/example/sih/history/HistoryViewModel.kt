@@ -4,23 +4,22 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.example.sih.database.ScoreDatabaseDao
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.coroutines.*
 
 class HistoryViewModel(
     private val database: ScoreDatabaseDao,
     application: Application,
-    private val chart : BarChart
+    private val chart : LineChart
 ):
         AndroidViewModel(application){
 
-    private lateinit var set : BarDataSet
+    private lateinit var set : LineDataSet
     private var xValues : MutableList<String> = mutableListOf()
-    private var scores : MutableList<BarEntry> = mutableListOf()
+    private var scores : MutableList<Entry> = mutableListOf()
     private var viewModelJob = Job()
     private var uiScope = CoroutineScope(Dispatchers.Main+viewModelJob)
 
@@ -30,9 +29,9 @@ class HistoryViewModel(
             getScoresDB(date)
             chart.xAxis.valueFormatter = IndexAxisValueFormatter(xValues)
             chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-            set = BarDataSet(scores,"BarDataSet")
+            set = LineDataSet(scores,"Student History")
             set.valueTextSize = 12f
-            chart.data = BarData(set)
+            chart.data = LineData(set)
             val xl = chart.xAxis
             xl.setDrawGridLines(false)
             xl.setAvoidFirstLastClipping(true)
@@ -52,7 +51,7 @@ class HistoryViewModel(
             var i= 0
             for (t in temp){
                 xValues.add(t.id)
-                scores.add(BarEntry(i.toFloat(), t.score.toFloat()))
+                scores.add(Entry(i.toFloat(), t.score.toFloat()))
                 i+=1
             }
 

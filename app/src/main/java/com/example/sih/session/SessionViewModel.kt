@@ -4,7 +4,9 @@ import android.app.Application
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.graphics.Color
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,6 +15,7 @@ import com.anychart.chart.common.dataentry.DataEntry
 import com.anychart.chart.common.dataentry.ValueDataEntry
 import com.anychart.charts.Cartesian
 import com.example.sih.database.ScoreDatabaseDao
+import com.example.sih.database.StudentScore
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -24,6 +27,8 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class SessionViewModel(private val database: ScoreDatabaseDao,
                        application: Application,
@@ -37,7 +42,8 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
     private var viewModelJob = Job()
     private var uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private var scores : MutableList<BarEntry> = mutableListOf()
-    private var students : HashMap<String, Int> = hashMapOf()
+    private var students : HashMap<String, Float> = hashMapOf()
+    private val movingScores = HashMap<String, Double>()
     var index = 0
 
     init {
@@ -49,18 +55,42 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         xl.setAvoidFirstLastClipping(true)
         val yl = chart.axisLeft
         yl.setDrawGridLines(false)
+        yl.labelCount = 20
+        yl.axisMinimum = 0F
+        yl.axisMaximum = 100F
         val yr = chart.axisRight
         yr.setDrawGridLines(false)
+        yr.labelCount = 20
+        yr.axisMinimum = 0F
+        yr.axisMaximum = 100F
         chart.invalidate()
     }
 
     private fun plot(){
         chart.refreshDrawableState()
-        chart.xAxis.valueFormatter = IndexAxisValueFormatter(students.keys)
+        val r : Map<String,Float> = students.toList().sortedBy {
+            (_,value) -> value }.toMap()
+        chart.xAxis.valueFormatter = IndexAxisValueFormatter(r.keys)
         set = BarDataSet(scores, "Student Set")
+        set.setColors(Color.parseColor("#6200EE"))
         chart.data = BarData(set)
         chart.notifyDataSetChanged()
         chart.invalidate()
+    }
+
+
+    private fun saveHistory(){
+        val curr = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val date = curr.format(formatter)
+        uiScope.launch {
+            withContext(Dispatchers.IO){
+                for(student in movingScores){
+                    val s = StudentScore(student.key+date, student.key, student.value, date)
+                    database.insert(s)
+                }
+            }
+        }
     }
 
     fun readFireBase(){
@@ -70,12 +100,10 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
                 teacherRef.addListenerForSingleValueEvent(object: ValueEventListener{
                     override fun onCancelled(error: DatabaseError) {
-                        //TODO("Not yet implemented")
                         Log.w(TAG, "Failed to read value", error.toException())
                     }
 
                     override fun onDataChange(snapshot: DataSnapshot) {
-                        //TODO("Not yet implemented")
                         val v = snapshot.getValue<HashMap<String, String>>()?.values
                         if (v != null) {
                             for (va in v){
@@ -96,7 +124,6 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
         var myRef = fireBaseDatabase.reference.child("nameList").child("teacher_name")
         myRef = fireBaseDatabase.reference.child(teachName.toString())
-        val movingScores = HashMap<String, Double>()
 
         val childEventListener = object : ChildEventListener{
             override fun onCancelled(error: DatabaseError) {
@@ -104,7 +131,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
@@ -115,8 +142,8 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                         val oldAvg : Long = movingScores[value.toString()]?.toLong() ?: 0
                         val avg  = k.toDouble()
                         movingScores[value.toString()] = avg
-                        scores[students[value.toString()]!!]=
-                            students[value.toString()]?.let { BarEntry(it.toFloat(),avg.toFloat()) }!!
+                        scores[students[value.toString()]?.toInt()!!]=
+                            students[value.toString()]?.let { BarEntry(it,avg.toFloat()) }!!
                         plot()
                     }
                 }
@@ -129,8 +156,8 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                 if(k != null){
                     val avg = k.toDouble()
                     movingScores[value.toString()] = avg
-                    students[value.toString()] = index
-                    students[value.toString()]?.let { BarEntry(it.toFloat(),avg.toFloat()) }?.let {
+                    students[value.toString()] = index.toFloat()
+                    students[value.toString()]?.let { BarEntry(it,avg.toFloat()) }?.let {
                         scores.add(
                             it
                         )
@@ -142,12 +169,10 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                TODO("Not yet implemented")
+
             }
 
         }
         myRef.addChildEventListener(childEventListener)
     }
-
-
 }

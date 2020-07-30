@@ -6,24 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.anychart.AnyChart
-import com.anychart.AnyChartView
-import com.anychart.chart.common.dataentry.DataEntry
 import com.example.sih.R
 import com.example.sih.database.ScoreDatabase
 import com.example.sih.databinding.FragmentHistoryBinding
-import com.github.mikephil.charting.charts.BarChart
-import java.text.SimpleDateFormat
-import java.util.*
+import com.github.mikephil.charting.charts.LineChart
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class HistoryFragment : Fragment(){
 
     private lateinit var binding : FragmentHistoryBinding
     private lateinit var viewModel: HistoryViewModel
     private lateinit var viewModelFactory : HistoryViewModelFactory
-    private lateinit var chart : BarChart
+    private lateinit var chart : LineChart
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,9 +38,15 @@ class HistoryFragment : Fragment(){
         binding.lifecycleOwner=this
 
         //val date =   SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(this)
-        viewModel.getScores("")
+        viewModel.getScores(getDate())
         return binding.root
 
+    }
+
+    private fun getDate() : String{
+        val curr = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return curr.format(formatter)
     }
 
 }

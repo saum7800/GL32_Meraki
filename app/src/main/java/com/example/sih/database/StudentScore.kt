@@ -9,6 +9,9 @@ data class StudentScore(
 
     @PrimaryKey val id : String,
 
+    @ColumnInfo(name = "name")
+    val name : String,
+
     @ColumnInfo(name = "score")
     var score : Double = 0.0,
 
