@@ -27,19 +27,21 @@ class HistoryViewModel(
 
         uiScope.launch {
             getScoresDB(date)
-            chart.xAxis.valueFormatter = IndexAxisValueFormatter(xValues)
-            chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-            set = LineDataSet(scores,"Student History")
-            set.valueTextSize = 12f
-            chart.data = LineData(set)
-            val xl = chart.xAxis
-            xl.setDrawGridLines(false)
-            xl.setAvoidFirstLastClipping(true)
-            val yl = chart.axisLeft
-            yl.setDrawGridLines(false)
-            val yr = chart.axisRight
-            yr.setDrawGridLines(false)
-            chart.invalidate()
+            if(xValues.isNotEmpty()) {
+                chart.xAxis.valueFormatter = IndexAxisValueFormatter(xValues)
+                chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+                set = LineDataSet(scores, "Student History")
+                set.valueTextSize = 12f
+                chart.data = LineData(set)
+                val xl = chart.xAxis
+                xl.setDrawGridLines(false)
+                xl.setAvoidFirstLastClipping(true)
+                val yl = chart.axisLeft
+                yl.setDrawGridLines(false)
+                val yr = chart.axisRight
+                yr.setDrawGridLines(false)
+                chart.invalidate()
+            }
 
         }
 

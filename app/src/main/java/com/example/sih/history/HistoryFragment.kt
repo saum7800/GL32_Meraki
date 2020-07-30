@@ -1,6 +1,7 @@
 package com.example.sih.history
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,8 +38,9 @@ class HistoryFragment : Fragment(){
         viewModel = ViewModelProvider(this,viewModelFactory).get(HistoryViewModel::class.java)
         binding.lifecycleOwner=this
 
-        //val date =   SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(this)
-        viewModel.getScores(getDate())
+        val date = getDate()
+        Log.d("History", date)
+        viewModel.getScores(date)
         return binding.root
 
     }

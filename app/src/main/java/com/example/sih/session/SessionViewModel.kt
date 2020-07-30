@@ -39,6 +39,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
     private lateinit var set : BarDataSet
     private val fireBaseDatabase = Firebase.database
     private var teacherRef = fireBaseDatabase.reference.child("nameList").child("teacher_name")
+    private var statusRef =  fireBaseDatabase.reference.child("online")
     private var viewModelJob = Job()
     private var uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private var scores : MutableList<BarEntry> = mutableListOf()
@@ -80,6 +81,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
 
     private fun saveHistory(){
+        Log.d("History","History being saved")
         val curr = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val date = curr.format(formatter)
@@ -112,6 +114,23 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                         }
                         makeData()
                         Log.d(TAG, "Value is : $teachName")
+                    }
+                })
+
+                statusRef.addValueEventListener(object : ValueEventListener{
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.w(TAG, "Failed to read value", error.toException())
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val value = snapshot.getValue<HashMap<String, Boolean>>()?.values
+                        if (value != null) {
+                            for(v in value){
+                                if(!v){
+                                    saveHistory()
+                                }
+                            }
+                        }
                     }
 
                 })

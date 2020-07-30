@@ -25,7 +25,7 @@ abstract class ScoreDatabase : RoomDatabase() {
                     context.applicationContext,
                     ScoreDatabase::class.java,
                     "score_database"
-                ).fallbackToDestructiveMigrationOnDowngrade()
+                ).fallbackToDestructiveMigration()
                     .build()
             }
             return instance
