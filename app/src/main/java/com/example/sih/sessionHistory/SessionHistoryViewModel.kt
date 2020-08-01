@@ -2,6 +2,7 @@ package com.example.sih.sessionHistory
 
 import android.app.Application
 import android.graphics.Color
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -47,6 +48,21 @@ class SessionHistoryViewModel(
         }
     }
 
+    private fun getColor(scores :MutableList<BarEntry> ): ArrayList<Int>{
+
+        val color = ArrayList<Int>()
+        var i= 0
+        while(i < scores.size){
+            if(scores[i].y < 50f){
+                color.add(Color.parseColor("#E45353"))
+            }else{
+                color.add(Color.parseColor("#8BC856"))
+            }
+            i+=1
+        }
+        return color
+    }
+
 
     fun getScores(date: String){
 
@@ -60,13 +76,13 @@ class SessionHistoryViewModel(
                 set = BarDataSet(scores, "Session History")
                 set.setColors(Color.parseColor("#6200EE"))
                 set.valueTextSize = 12f
+                set.colors = getColor(scores)
                 chart.data = BarData(set)
                 val xl = chart.xAxis
                 xl.setDrawGridLines(false)
                 xl.setAvoidFirstLastClipping(true)
                 xl.labelCount=xValues.size
                 val yl = chart.axisLeft
-
                 yl.setDrawGridLines(false)
                 val yr = chart.axisRight
                 yr.setDrawGridLines(false)

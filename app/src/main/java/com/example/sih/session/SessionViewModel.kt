@@ -96,13 +96,16 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
     }
 
     private fun getColor(): ArrayList<Int>{
+        Log.d("Session",movingScores.values.toString())
         val color = ArrayList<Int>()
-        for((key,value) in movingScores){
-            if(value<50f){
-                color.add(Color.RED)
+        var i= 0
+        while(i < scores.size){
+            if(scores[i].y < 50f){
+                color.add(Color.parseColor("#E45353"))
             }else{
-                color.add(Color.GREEN)
+                color.add(Color.parseColor("#8BC856"))
             }
+            i+=1
         }
         return color
     }
