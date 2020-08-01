@@ -73,7 +73,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         chart.xAxis.valueFormatter = IndexAxisValueFormatter(r.keys)
         chart.xAxis.labelCount = movingScores.size
         set = BarDataSet(scores, "Student Set")
-        set.setColors(Color.parseColor("#6200EE"))
+        set.colors = getColor()
         chart.data = BarData(set)
         chart.notifyDataSetChanged()
         chart.invalidate()
@@ -93,6 +93,18 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                 }
             }
         }
+    }
+
+    private fun getColor(): ArrayList<Int>{
+        val color = ArrayList<Int>()
+        for((key,value) in movingScores){
+            if(value<50f){
+                color.add(Color.RED)
+            }else{
+                color.add(Color.GREEN)
+            }
+        }
+        return color
     }
 
     fun readFireBase(){
