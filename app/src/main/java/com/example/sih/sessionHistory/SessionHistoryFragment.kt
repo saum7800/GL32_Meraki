@@ -1,13 +1,11 @@
-package com.example.sih.history
+package com.example.sih.sessionHistory
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.SimpleCursorAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,36 +13,38 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.sih.R
 import com.example.sih.database.ScoreDatabase
 import com.example.sih.databinding.FragmentHistoryBinding
-import com.github.mikephil.charting.charts.BarChart
+import com.example.sih.databinding.FragmentSessionHistoryBinding
+import com.example.sih.history.HistoryViewModel
+import com.example.sih.history.HistoryViewModelFactory
 import com.github.mikephil.charting.charts.LineChart
 
-class HistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
+class SessionHistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
-    private lateinit var binding : FragmentHistoryBinding
-    private lateinit var viewModel: HistoryViewModel
-    private lateinit var viewModelFactory : HistoryViewModelFactory
-    private lateinit var chart : BarChart
+    private lateinit var binding : FragmentSessionHistoryBinding
+    private lateinit var viewModel: SessionHistoryViewModel
+    private lateinit var viewModelFactory : SessionHistoryViewModelFactory
+    private lateinit var chart : LineChart
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View{
+    ): View {
 
         binding = DataBindingUtil.inflate(
-            inflater,R.layout.fragment_history,container,false
+            inflater, R.layout.fragment_session_history,container,false
         )
         val application = requireNotNull(this.activity).application
         val dataSource = ScoreDatabase.getInstance(application).scoreDatabaseDao
-        val chart = binding.historyChart
-        viewModelFactory = HistoryViewModelFactory(dataSource,application,chart)
-        viewModel = ViewModelProvider(this,viewModelFactory).get(HistoryViewModel::class.java)
+        val chart = binding.sessionHistoryChart
+        viewModelFactory = SessionHistoryViewModelFactory(dataSource,application,chart)
+        viewModel = ViewModelProvider(this,viewModelFactory).get(SessionHistoryViewModel::class.java)
         binding.lifecycleOwner=this
 
         val spinner = binding.spinner
-        viewModel.students.observe(viewLifecycleOwner, Observer {
+        viewModel.dates.observe(viewLifecycleOwner, Observer {
             if(it!=null && it.isNotEmpty()){
-                val adapter = ArrayAdapter(application,android.R.layout.simple_spinner_item,viewModel.students.value!!)
+                val adapter = ArrayAdapter(application,android.R.layout.simple_spinner_item,viewModel.dates.value!!)
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 spinner.adapter= adapter
                 spinner.onItemSelectedListener=this
@@ -54,13 +54,14 @@ class HistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
         return binding.root
     }
 
+
+
     override fun onNothingSelected(parent: AdapterView<*>?) {
         //Nothing
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val date = parent?.getItemAtPosition(position).toString()
-        Log.d("History", date)
         viewModel.getScores(date)
     }
 

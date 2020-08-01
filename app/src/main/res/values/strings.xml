@@ -3,4 +3,5 @@
     <string name="chart">Chart</string>
     <string name="view_current_session_scores">View Current Session Scores</string>
     <string name="view_student_history">View Student History</string>
+    <string name="view_session_history">View Session History</string>
 </resources>

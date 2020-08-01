@@ -194,4 +194,9 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         }
         myRef.addChildEventListener(childEventListener)
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
+    }
 }
