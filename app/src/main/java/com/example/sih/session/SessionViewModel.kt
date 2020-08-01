@@ -51,7 +51,6 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         chart.animateY(3000)
         val xl = chart.xAxis
-        xl.labelCount=5
         xl.setDrawGridLines(false)
         xl.setAvoidFirstLastClipping(true)
         val yl = chart.axisLeft
@@ -72,6 +71,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         val r : Map<String,Float> = students.toList().sortedBy {
             (_,value) -> value }.toMap()
         chart.xAxis.valueFormatter = IndexAxisValueFormatter(r.keys)
+        chart.xAxis.labelCount = movingScores.size
         set = BarDataSet(scores, "Student Set")
         set.setColors(Color.parseColor("#6200EE"))
         chart.data = BarData(set)
@@ -80,7 +80,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
     }
 
 
-    private fun saveHistory(){
+    fun saveHistory(){
         Log.d("History","History being saved")
         val curr = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")

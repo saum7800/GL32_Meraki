@@ -26,4 +26,7 @@ interface ScoreDatabaseDao {
     @Query("SELECT * FROM score_history_table WHERE name= :student")
     fun getScoreByStudent(student : String) : List<StudentScore>
 
+    @Query("DELETE FROM score_history_table")
+    fun clear()
+
 }

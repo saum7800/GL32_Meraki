@@ -39,5 +39,9 @@ class SessionFragment : Fragment() {
         return binding.root
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.saveHistory()
+    }
 }
 

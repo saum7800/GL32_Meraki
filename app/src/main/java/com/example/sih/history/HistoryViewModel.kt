@@ -1,6 +1,7 @@
 package com.example.sih.history
 
 import android.app.Application
+import android.graphics.Color
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -16,15 +17,13 @@ import kotlinx.coroutines.*
 class HistoryViewModel(
     private val database: ScoreDatabaseDao,
     application: Application,
-    private val chart : BarChart
+    private val chart : LineChart
 ):
         AndroidViewModel(application){
 
     private val _students = MutableLiveData<ArrayList<String>>()
     val students : LiveData<ArrayList<String>>
         get() = _students
-    private var xValues : MutableList<String> = mutableListOf()
-    private var scores : MutableList<BarEntry> = mutableListOf()
     private var viewModelJob = Job()
     private var uiScope = CoroutineScope(Dispatchers.Main+viewModelJob)
 
@@ -49,41 +48,43 @@ class HistoryViewModel(
     fun getScores(date: String){
 
         uiScope.launch {
-            getScoresDB(date)
+             val xValues : MutableList<String> = mutableListOf()
+             val scores : MutableList<Entry> = mutableListOf()
+            getScoresDB(date,xValues,scores)
             if(xValues.isNotEmpty()) {
 
                 Log.d("History",scores.toString())
-                chart.setDrawValueAboveBar(true)
                 chart.xAxis.valueFormatter = IndexAxisValueFormatter(xValues)
-                val set = BarDataSet(scores, "Student History")
+                chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+                val set = LineDataSet(scores, "Student History")
                 set.valueTextSize = 12f
-                chart.data = BarData(set)
-                chart.axisLeft.axisMinimum
-                chart.axisRight.axisMinimum
-                chart.setPinchZoom(false)
+                set.enableDashedHighlightLine(10f, 5f, 0f)
+                set.setColors(Color.parseColor("#6200EE"))
+                set.setCircleColor(Color.parseColor("#6200EE"))
+                chart.data = LineData(set)
                 val xl = chart.xAxis
+                xl.labelCount = xValues.size
                 xl.setDrawGridLines(false)
                 xl.setAvoidFirstLastClipping(true)
                 val yl = chart.axisLeft
                 yl.setDrawGridLines(false)
                 val yr = chart.axisRight
                 yr.setDrawGridLines(false)
-
                 chart.invalidate()
-
             }
 
         }
 
     }
 
-    private suspend fun getScoresDB(student : String){
+    private suspend fun getScoresDB(student : String, xValues : MutableList<String>, scores : MutableList<Entry> ){
         return withContext(Dispatchers.IO){
             val temp =database.getScoreByStudent(student)
+            Log.d("History",temp.size.toString())
             var i= 0
             for (t in temp){
-                xValues.add(t.id)
-                scores.add(BarEntry(i.toFloat(), t.score.toFloat()))
+                xValues.add(t.date)
+                scores.add(Entry(i.toFloat(), t.score.toFloat()))
                 i+=1
             }
 

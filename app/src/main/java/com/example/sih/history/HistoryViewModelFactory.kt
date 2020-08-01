@@ -12,7 +12,7 @@ import java.lang.IllegalArgumentException
 class HistoryViewModelFactory (
     private val dataSource: ScoreDatabaseDao,
     private val application: Application,
-    private val chart : BarChart
+    private val chart : LineChart
 ) : ViewModelProvider.Factory{
     @Suppress("unchecked cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

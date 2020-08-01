@@ -23,7 +23,7 @@ class HistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var binding : FragmentHistoryBinding
     private lateinit var viewModel: HistoryViewModel
     private lateinit var viewModelFactory : HistoryViewModelFactory
-    private lateinit var chart : BarChart
+    private lateinit var chart : LineChart
 
     override fun onCreateView(
         inflater: LayoutInflater,
