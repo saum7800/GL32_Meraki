@@ -1,0 +1,47 @@
+fun makeData(){
+
+        val scoreRef = fireBaseDatabase.reference.child("means_score")
+        val myRef = fireBaseDatabase.reference.child("Teacher")
+
+        val childEventListener = object : ChildEventListener{
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(TAG, "Failed to read value", error.toException())
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                val value = snapshot.key
+                val k = snapshot.getValue<Long>()
+
+               // Log.d(TAG, "Value is : $value, $k")
+            }
+
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val value = snapshot.key
+                val k = snapshot.getValue<Long>()
+
+                //Log.d(TAG, "Value is : $value, $k")
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+
+            }
+
+        }
+        myRef.addChildEventListener(childEventListener)
+
+        scoreRef.addValueEventListener(object: ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(TAG, "Failed to read value", error.toException())
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val score = snapshot.getValue<Long>()
+                Log.d(TAG, "Value is score : $score")
+            }
+
+        })
+    }
