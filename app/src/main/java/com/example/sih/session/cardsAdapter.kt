@@ -1,22 +1,27 @@
 package com.example.sih.session
 
+import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sih.databinding.CardStudentListBinding
 
-class CardsAdapter() : ListAdapter<String, RecyclerView.ViewHolder>(DiffCallBack()){
+class CardsAdapter() : ListAdapter<Student, RecyclerView.ViewHolder>(DiffCallBack()){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder.from(parent)
     }
 
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val student = getItem(position)
+
         when(holder){
             is ViewHolder ->{
+                val student = getItem(position)
                 holder.bind(student)
             }
         }
@@ -25,7 +30,7 @@ class CardsAdapter() : ListAdapter<String, RecyclerView.ViewHolder>(DiffCallBack
     class ViewHolder private constructor(val binding: CardStudentListBinding) :
             RecyclerView.ViewHolder(binding.root){
 
-        fun bind(student : String){
+        fun bind(student : Student){
                 binding.student = student
                 binding.executePendingBindings()
         }
@@ -41,12 +46,12 @@ class CardsAdapter() : ListAdapter<String, RecyclerView.ViewHolder>(DiffCallBack
 
 }
 
-class DiffCallBack() : DiffUtil.ItemCallback<String>(){
-    override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
-        return oldItem == newItem
+class DiffCallBack() : DiffUtil.ItemCallback<Student>(){
+    override fun areItemsTheSame(oldItem: Student, newItem: Student): Boolean {
+        return oldItem.name == newItem.name
     }
 
-    override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
-        return oldItem==newItem
+    override fun areContentsTheSame(oldItem: Student, newItem: Student): Boolean {
+        return oldItem == newItem
     }
 }

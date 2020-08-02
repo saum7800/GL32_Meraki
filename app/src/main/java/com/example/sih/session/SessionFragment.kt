@@ -9,10 +9,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sih.R
 import com.example.sih.database.ScoreDatabase
 import com.example.sih.databinding.FragmentSessionPlotBinding
 import com.github.mikephil.charting.charts.BarChart
+import kotlinx.android.synthetic.main.fragment_session_plot.*
 
 
 class SessionFragment : Fragment() {
@@ -41,10 +43,10 @@ class SessionFragment : Fragment() {
         viewModel = ViewModelProvider(this, viewModelFactory).get(SessionViewModel::class.java)
         binding.lifecycleOwner = this
 
+
         viewModel.readFireBase()
 
         drowsyAdapter = CardsAdapter()
-        binding.drowsyList.adapter=drowsyAdapter
         inattentiveAdapter = CardsAdapter()
         binding.inattentiveList.adapter=inattentiveAdapter
         attentiveAdapter = CardsAdapter()
@@ -53,17 +55,23 @@ class SessionFragment : Fragment() {
         binding.interactiveList.adapter=interactiveAdapter
 
 
+
         viewModel.drowsy.observe(viewLifecycleOwner, Observer {
             it?.let {
-                Log.d("Session-Drowsy", it.toString())
-                drowsyAdapter.submitList(it)
+                    val temp = it
+                    drowsyAdapter.submitList(temp)
+                    Log.d("Session-Drowsy", it.toString())
+                    drowsyAdapter.notifyDataSetChanged()
             }
         })
 
-        /**viewModel.inattentive.observe(viewLifecycleOwner, Observer {
+        viewModel.inattentive.observe(viewLifecycleOwner, Observer {
             it?.let{
+
                 Log.d("Session-Inattentive", it.toString())
                 inattentiveAdapter.submitList(it)
+                inattentiveAdapter.notifyDataSetChanged()
+
             }
         })
 
@@ -71,14 +79,16 @@ class SessionFragment : Fragment() {
             it?.let {
                 Log.d("Session-Attentive", it.toString())
                 attentiveAdapter.submitList(it)
+                attentiveAdapter.notifyDataSetChanged()
             }
         })
         viewModel.interactive.observe(viewLifecycleOwner, Observer {
             it?.let{
                 Log.d("Session-Interactive", it.toString())
                 interactiveAdapter.submitList(it)
+                interactiveAdapter.notifyDataSetChanged()
             }
-        })**/
+        })
         return binding.root
     }
 

@@ -49,20 +49,20 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
     private val currScores = StudentScore("","")
 
-    private val _drowsy = MutableLiveData<MutableList<String?>>()
-    val drowsy : LiveData<MutableList<String?>>
+    private val _drowsy = MutableLiveData<MutableList<Student?>>()
+    val drowsy : LiveData<MutableList<Student?>>
         get() = _drowsy
 
-    private val _inattentive = MutableLiveData<MutableList<String?>>()
-    val inattentive : LiveData<MutableList<String?>>
+    private val _inattentive = MutableLiveData<MutableList<Student?>>()
+    val inattentive : LiveData<MutableList<Student?>>
         get() = _inattentive
 
-    private val _attentive = MutableLiveData<MutableList<String?>>()
-    val attentive : LiveData<MutableList<String?>>
+    private val _attentive = MutableLiveData<MutableList<Student?>>()
+    val attentive : LiveData<MutableList<Student?>>
         get() = _attentive
 
-    private val _interactive = MutableLiveData<MutableList<String?>>()
-    val interactive : LiveData<MutableList<String?>>
+    private val _interactive = MutableLiveData<MutableList<Student?>>()
+    val interactive : LiveData<MutableList<Student?>>
         get() = _interactive
 
 
@@ -135,28 +135,71 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                val value = snapshot.key
-                _drowsy.value?.remove(value)
-                _inattentive.value?.remove(value)
-                _attentive.value?.remove(value)
-                _interactive.value?.remove(value)
+                val value = snapshot.key?.let { Student(it) }
+                var toDelete = _drowsy.value
+                toDelete?.remove(value)
+                _drowsy.postValue(toDelete)
+                toDelete = _inattentive.value
+                toDelete?.remove(value)
+                _inattentive.postValue(toDelete)
+                toDelete = _attentive.value
+                toDelete?.remove(value)
+                _attentive.postValue(toDelete)
+                toDelete = _interactive.value
+                toDelete?.remove(value)
+                _interactive.postValue(toDelete)
+
                 when(snapshot.getValue<Long>()){
-                    0L -> _drowsy.value?.add(value)
-                    1L -> _inattentive.value?.add(value)
-                    2L -> _attentive.value?.add(value)
-                    else -> _inattentive.value?.add(value)
+                    0L -> {
+
+                        toDelete = _drowsy.value
+                        toDelete?.add(value)
+                        _drowsy.postValue(toDelete)
+
+                    }
+                    1L -> {
+                        toDelete = _inattentive.value
+                        toDelete?.add(value)
+                        _inattentive.postValue(toDelete)
+                    }
+                    2L -> {
+                        toDelete = _attentive.value
+                        toDelete?.add(value)
+                        _attentive.postValue(toDelete)
+                    }
+                    else -> {
+                        toDelete = _interactive.value
+                        toDelete?.add(value)
+                        _interactive.postValue(toDelete)
+                    }
                 }
             }
 
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val value = snapshot.key
+                val value = snapshot.key?.let { Student(it) }
                 Log.d("Category",value.toString()+"-"+snapshot.value.toString())
                 when(snapshot.getValue<Long>()){
-                    0L -> _drowsy.value?.add(value)
-                    1L -> _inattentive.value?.add(value)
-                    2L -> _attentive.value?.add(value)
-                    else -> _inattentive.value?.add(value)
+                    0L -> {
+                        val temp = _drowsy.value
+                        temp?.add(value)
+                        _drowsy.postValue(temp)
+                    }
+                    1L -> {
+                        val temp = _inattentive.value
+                        temp?.add(value)
+                        _inattentive.postValue(temp)
+                    }
+                    2L -> {
+                        val temp = _attentive.value
+                        temp?.add(value)
+                        _attentive.postValue(temp)
+                    }
+                    else -> {
+                        val temp = _interactive.value
+                        temp?.add(value)
+                        _interactive.postValue(temp)
+                    }
                 }
                 //Log.d(TAG, "Value is : $value, $k")
             }

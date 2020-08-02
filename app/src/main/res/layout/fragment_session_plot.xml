@@ -19,9 +19,14 @@
         app:cardCornerRadius="5dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="190dp"
+            android:layout_height="360dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:orientation="vertical">
+
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
@@ -32,17 +37,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/drowsy"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textAlignment="center" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/drowsyList"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent" />
         </LinearLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+</com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/inattentive"
@@ -70,7 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/inattentive"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textAlignment="center" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -78,7 +83,9 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-        </LinearLayout>
+
+
+            </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -111,7 +118,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/attentive"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textAlignment="center" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -142,23 +149,23 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:src="@mipmap/interactive"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/interactive" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/interactive"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textAlignment="center" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/interactiveList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/interactiveList"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
