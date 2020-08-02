@@ -30,13 +30,13 @@
     <fragment
         android:id="@+id/historyFragment"
         android:name="com.example.sih.history.HistoryFragment"
-        android:label="Student History" />
+        android:label="Session History" />
     <fragment
         android:id="@+id/sessionFragment"
         android:name="com.example.sih.session.SessionFragment"
         android:label="Session" />
     <fragment
         android:id="@+id/sessionHistoryFragment"
-        android:name="com.example.sih.sessionHistory.SessionHistoryFragment"
+        android:name="com.example.sih.studentHistory.StudentHistoryFragment"
         android:label="Session History" />
 </navigation>

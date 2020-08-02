@@ -1,4 +1,4 @@
-package com.example.sih.sessionHistory
+package com.example.sih.studentHistory
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,17 +12,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.sih.R
 import com.example.sih.database.ScoreDatabase
-import com.example.sih.databinding.FragmentHistoryBinding
-import com.example.sih.databinding.FragmentSessionHistoryBinding
-import com.example.sih.history.HistoryViewModel
-import com.example.sih.history.HistoryViewModelFactory
+import com.example.sih.databinding.FragmentStudentHistoryBinding
 import com.github.mikephil.charting.charts.LineChart
 
-class SessionHistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
+class StudentHistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
-    private lateinit var binding : FragmentSessionHistoryBinding
-    private lateinit var viewModel: SessionHistoryViewModel
-    private lateinit var viewModelFactory : SessionHistoryViewModelFactory
+    private lateinit var binding : FragmentStudentHistoryBinding
+    private lateinit var viewModel: StudentHistoryViewModel
+    private lateinit var viewModelFactory : StudentHistoryViewModelFactory
     private lateinit var chart : LineChart
 
     override fun onCreateView(
@@ -32,13 +29,13 @@ class SessionHistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
     ): View {
 
         binding = DataBindingUtil.inflate(
-            inflater, R.layout.fragment_session_history,container,false
+            inflater, R.layout.fragment_student_history,container,false
         )
         val application = requireNotNull(this.activity).application
         val dataSource = ScoreDatabase.getInstance(application).scoreDatabaseDao
         val chart = binding.sessionHistoryChart
-        viewModelFactory = SessionHistoryViewModelFactory(dataSource,application,chart)
-        viewModel = ViewModelProvider(this,viewModelFactory).get(SessionHistoryViewModel::class.java)
+        viewModelFactory = StudentHistoryViewModelFactory(dataSource,application,chart)
+        viewModel = ViewModelProvider(this,viewModelFactory).get(StudentHistoryViewModel::class.java)
         binding.lifecycleOwner=this
 
         val spinner = binding.spinner
@@ -61,8 +58,8 @@ class SessionHistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        val date = parent?.getItemAtPosition(position).toString()
-        viewModel.getScores(date)
+        //val date = parent?.getItemAtPosition(position).toString()
+        //viewModel.getScores(date)
     }
 
 }

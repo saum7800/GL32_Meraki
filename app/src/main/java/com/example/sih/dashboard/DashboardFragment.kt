@@ -42,7 +42,7 @@ class DashboardFragment : Fragment(){
             )
         }
 
-        binding.sessionHistoryButton.setOnClickListener {
+        binding.studentHistoryButton.setOnClickListener {
             this.findNavController().navigate(
                 DashboardFragmentDirections.actionDashboardFragmentToSessionHistoryFragment()
             )
