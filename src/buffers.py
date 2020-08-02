@@ -14,6 +14,8 @@ class Buffer:
         self.yawns = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
         self.nods = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
         self.presences = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
+        self.attention_scores = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
+        self.attention_classes = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
         self.num_people = -1
         self.all_people = set()
         self.this_frame_people = set()
@@ -36,6 +38,12 @@ class Buffer:
 
     def add_nod(self, name, nod):
         self.nods[name].append(nod)
+
+    def add_attention_score(self, name, score):
+        self.attention_scores[name].append(score)
+
+    def add_attention_class(self, name, clas):
+        self.attention_classes[name].append(clas)
 
     def set_num_people(self, num_people):
         self.num_people = num_people
