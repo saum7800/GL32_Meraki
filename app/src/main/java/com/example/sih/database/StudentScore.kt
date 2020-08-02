@@ -12,7 +12,21 @@ data class StudentScore(
     var studentScore : String?
 
 )
+       /*
+        scoreRef.addValueEventListener(object: ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(TAG, "Failed to read value", error.toException())
+            }
 
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val score = snapshot.getValue<Long>()
+                if (score != null) {
+                    scores.add(score)
+                }
+                //Log.d(TAG, "Value is score : $score")
+            }
+
+        })*/
 class MyConverters{
 
     @TypeConverter

@@ -125,13 +125,13 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val key = snapshot.key
                 val value = key?.let { Student(it) }
-                var drowsyList = _drowsy.value
+                val drowsyList = _drowsy.value
                 drowsyList?.remove(value)
-                var inattentiveList = _inattentive.value
+                val inattentiveList = _inattentive.value
                 inattentiveList?.remove(value)
-                var attentivelist = _attentive.value
-                attentivelist?.remove(value)
-                var interactiveList = _interactive.value
+                val attentiveList = _attentive.value
+                attentiveList?.remove(value)
+                val interactiveList = _interactive.value
                 interactiveList?.remove(value)
 
                 when(snapshot.getValue<Long>()){
@@ -145,7 +145,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                     }
                     2L -> {
                         counterCollection[key.toString()]?.currentState = 2
-                        attentivelist?.add(value)
+                        attentiveList?.add(value)
                     }
                     else -> {
                         counterCollection[key.toString()]?.currentState = 3
@@ -155,10 +155,10 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
                 _drowsy.postValue(drowsyList)
                 _inattentive.postValue(inattentiveList)
-                _attentive.postValue(attentivelist)
+                _attentive.postValue(attentiveList)
                 _interactive.postValue(interactiveList)
-                val a = counterCollection["Surbhi"]?.cArr?.contentToString()
-                Log.d(TAG, "mean_counter $a")
+                //val a = counterCollection["Surbhi"]?.cArr?.contentToString()
+                //Log.d(TAG, "mean_counter $a")
 
             }
 
@@ -207,21 +207,6 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
         myRef.addChildEventListener(childEventListener)
 
-        /*
-        scoreRef.addValueEventListener(object: ValueEventListener{
-            override fun onCancelled(error: DatabaseError) {
-                Log.w(TAG, "Failed to read value", error.toException())
-            }
-
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val score = snapshot.getValue<Long>()
-                if (score != null) {
-                    scores.add(score)
-                }
-                //Log.d(TAG, "Value is score : $score")
-            }
-
-        })*/
 
         meanScoreListener()
     }
