@@ -16,9 +16,9 @@ def classify(buffer):
     classes = defaultdict(lambda: AttentionClass.UNKNOWN)
     scores = defaultdict(lambda: 0)
     for name in buffer.this_frame_people:
-        if sum(buffer.presences) < buffer.MAX_FRAMES / 2:
+        if sum(buffer.presences[name]) < len(buffer.presences[name]) / 2:
             classes[name] = AttentionClass.UNKNOWN
-            scores[name] = buffer.sco
+            scores[name] = -1
             continue
         mean_var = np.mean(buffer.lip_variances[name]) if len(buffer.lip_variances[name]) != 0 else 0
         mean_orient = np.mean(buffer.orientation_scores[name]) if len(buffer.orientation_scores[name]) != 0 else 0.5
@@ -36,7 +36,7 @@ def classify(buffer):
         buffer.add_attention_class(name, classes[name])
         for name in buffer.all_people:
             if name not in buffer.this_frame_people:
-                if sum(buffer.presences) < buffer.MAX_FRAMES / 2:
+                if sum(buffer.presences[name]) < len(buffer.presences[name]) / 2:
                     classes[name] = AttentionClass.UNKNOWN
                     scores[name] = -1
                     continue
