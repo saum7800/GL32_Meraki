@@ -17,7 +17,10 @@ class MyConverters{
 
     @TypeConverter
     fun fromStringToList(value: String?) : List<Double>?{
-        return value?.split(",")?.map { it.trim().toDouble() }
+        if(value==null){
+            return listOf()
+        }
+        return value.split(",").map { it.trim().toDouble() }
     }
 
     @TypeConverter

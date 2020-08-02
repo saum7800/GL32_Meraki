@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
+import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -105,18 +106,19 @@ class SessionFragment : Fragment() {
 
     private fun blink(){
         val anim = ObjectAnimator.ofInt(
-            drowsyList, "backgroundColor", Color.WHITE, Color.parseColor("#30FF0000"),
+            drowsyList, "backgroundColor", Color.WHITE, Color.parseColor("#70FF0000"),
             Color.WHITE
         )
-        anim.duration = 1000
+        anim.duration = 1500
         anim.setEvaluator(ArgbEvaluator())
         anim.start()
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onResume() {
+        super.onResume()
         viewModel.saveHistory()
         viewModel.saveStudentHistory()
     }
+
 }
 

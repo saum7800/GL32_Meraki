@@ -68,12 +68,14 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         }
     }
 
-    private fun getList(){
+   private fun getList(){
         uiScope.launch {
             withContext(Dispatchers.IO){
                 val t = myConverters.fromStringToList(sessionId?.let { database.getScoreByDate(it) })
-                if(t!=null)
-                    scores= t as MutableList<Double>
+                scores = if(t!=null && t.isNotEmpty())
+                    t as MutableList<Double>
+                else
+                    mutableListOf<Double>()
                 Log.i("mine","am i getting score $t")
             }
         }
@@ -96,9 +98,11 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         Log.d("History","History being saved")
         uiScope.launch {
             withContext(Dispatchers.IO){
-                currScores.id= sessionId as String
-                currScores.studentScore=myConverters.listToString(scores)
-                database.insert(currScores)
+                if(sessionId!=null) {
+                    currScores.id = sessionId as String
+                    currScores.studentScore = myConverters.listToString(scores)
+                    database.insert(currScores)
+                }
             }
         }
     }
@@ -121,6 +125,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                             makeData()
                         }
                         else{
+
                             saveHistory()
                             saveStudentHistory()
                         }
