@@ -1,11 +1,14 @@
 package com.example.sih.history
 
 import android.app.Application
+import android.content.ContentValues.TAG
 import android.graphics.Color
+import android.nfc.Tag
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.sih.database.MyConverters
 import com.example.sih.database.ScoreDatabaseDao
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.LineChart
@@ -18,10 +21,12 @@ class HistoryViewModel(
     private val database: ScoreDatabaseDao,
     application: Application,
     private val chart : LineChart
+
 ):
         AndroidViewModel(application){
 
     private val _students = MutableLiveData<ArrayList<String>>()
+    private var myConverters=MyConverters()
     val students : LiveData<ArrayList<String>>
         get() = _students
     private var viewModelJob = Job()
@@ -30,7 +35,9 @@ class HistoryViewModel(
     init {
         uiScope.launch {
             withContext(Dispatchers.IO){
-               /** val cursor  = database.getNames()
+                val cursor = database.getDates()
+
+
                 val temp : ArrayList<String> = arrayListOf()
                 temp.add(" ")
                 if(cursor.moveToFirst()){
@@ -40,20 +47,27 @@ class HistoryViewModel(
                     }while (cursor.moveToNext())
                     cursor.close()
                     _students.postValue(temp)
-                }**/
+                }
             }
         }
     }
 
     fun getScores(date: String){
-        /**
-        uiScope.launch {
-             val xValues : MutableList<String> = mutableListOf()
-             val scores : MutableList<Entry> = mutableListOf()
-            getScoresDB(date,xValues,scores)
-            if(xValues.isNotEmpty()) {
 
-                Log.d("History",scores.toString())
+        uiScope.launch {
+
+            val score_string = database.getScoreByDate(date)
+            val list = myConverters.fromStringToList(score_string)
+            val xValues : MutableList<String> = mutableListOf()
+            val scores : MutableList<Entry> = mutableListOf()
+            //getScoresDB(date,xValues,scores)
+            if(list != null && list.isNotEmpty()) {
+                var i = 0
+                while (i < list.size){
+                    xValues.add(i.toString());
+                    scores.add(Entry(i.toFloat(), list[i].toFloat()))
+                }
+
                 chart.xAxis.valueFormatter = IndexAxisValueFormatter(xValues)
                 chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
                 val set = LineDataSet(scores, "Student History")
@@ -74,7 +88,7 @@ class HistoryViewModel(
             }
 
         }
-**/
+
     }
 
     private suspend fun getScoresDB(student : String, xValues : MutableList<String>, scores : MutableList<Entry> ){
