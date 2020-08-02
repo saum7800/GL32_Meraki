@@ -12,12 +12,13 @@ import java.lang.IllegalArgumentException
 class HistoryViewModelFactory (
     private val dataSource: ScoreDatabaseDao,
     private val application: Application,
-    private val chart : LineChart
+    private val chart : LineChart,
+    private val date : String
 ) : ViewModelProvider.Factory{
     @Suppress("unchecked cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(HistoryViewModel::class.java)){
-            return HistoryViewModel(dataSource,application,chart) as T
+            return HistoryViewModel(dataSource,application,chart,date) as T
         }
 
         throw IllegalArgumentException("Unknown ViewModel")

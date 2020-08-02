@@ -163,20 +163,20 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                 interactiveList?.remove(value)
 
                 when(snapshot.getValue<Long>()){
-                    0L -> {
+                    1L -> {
                         _animBool.value = true
                         counterCollection[key.toString()]?.currentState = 0
                         drowsyList?.add(value)
                     }
-                    1L -> {
+                    2L -> {
                         counterCollection[key.toString()]?.currentState = 1
                         inattentiveList?.add(value)
                     }
-                    2L -> {
+                    3L -> {
                         counterCollection[key.toString()]?.currentState = 2
                         attentiveList?.add(value)
                     }
-                    else -> {
+                    4L -> {
                         counterCollection[key.toString()]?.currentState = 3
                         interactiveList?.add(value)
                     }
@@ -198,28 +198,28 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                 val value = key?.let { Student(it) }
                 Log.d("Category",value.toString()+"-"+snapshot.value.toString())
                 when(snapshot.getValue<Long>()){
-                    0L -> {
+                    1L -> {
                         _animBool.value = true
                         counterCollection[key.toString()]!!.currentState = 0
                         val temp = _drowsy.value
                         temp?.add(value)
                         _drowsy.postValue(temp)
                     }
-                    1L -> {
+                    2L -> {
 
                         counterCollection[key.toString()]!!.currentState = 1
                         val temp = _inattentive.value
                         temp?.add(value)
                         _inattentive.postValue(temp)
                     }
-                    2L -> {
+                    3L -> {
 
                         counterCollection[key.toString()]!!.currentState = 1
                         val temp = _attentive.value
                         temp?.add(value)
                         _attentive.postValue(temp)
                     }
-                    else -> {
+                    4L -> {
                         counterCollection[key.toString()]!!.currentState = 1
                         val temp = _interactive.value
                         temp?.add(value)

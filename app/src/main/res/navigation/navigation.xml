@@ -30,7 +30,11 @@
     <fragment
         android:id="@+id/historyFragment"
         android:name="com.example.sih.history.HistoryFragment"
-        android:label="Session History" />
+        android:label="Session History" >
+        <argument
+            android:name="date"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/sessionFragment"
         android:name="com.example.sih.session.SessionFragment"

@@ -38,7 +38,9 @@ class HistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val application = requireNotNull(this.activity).application
         val dataSource = ScoreDatabase.getInstance(application).scoreDatabaseDao
         val chart = binding.historyChart
-        viewModelFactory = HistoryViewModelFactory(dataSource,application,chart)
+        val args = HistoryFragmentArgs.fromBundle(requireArguments())
+        val date = args.date
+        viewModelFactory = HistoryViewModelFactory(dataSource,application,chart,date)
         viewModel = ViewModelProvider(this,viewModelFactory).get(HistoryViewModel::class.java)
         binding.lifecycleOwner=this
 
@@ -50,7 +52,7 @@ class HistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 spinner.adapter= adapter
                 spinner.onItemSelectedListener=this
-                Log.i("mine","got cursor  observer done succesfully")
+                Log.i("mine","got cursor  observer done successfully")
             }
         })
 

@@ -20,7 +20,7 @@ interface ScoreDatabaseDao {
     @Query("SELECT id  FROM score_history_table")
     fun getDates(): Cursor
 
-    @Query("SELECT id  FROM score_history_table  WHERE id LIKE :date")
+    @Query("SELECT id  FROM score_history_table  WHERE id LIKE :date ")
     fun getSimilarDates(date: String): Cursor
 
     @Query("DELETE FROM score_history_table")

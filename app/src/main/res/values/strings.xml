@@ -8,4 +8,9 @@
     <string name="attentive">Attentive</string>
     <string name="inattentive">Inattentive</string>
     <string name="drowsy">Drowsy</string>
+    <string name="select_date_to_view_session_history">Select Date To View Session History</string>
+    <string name="select_session_to_view_graph">Select Session to View Graph</string>
+    <string name="session_history">Session History</string>
+    <string name="live_session">Live Session</string>
+    <string name="watch_students_live_attention_status">Watch Students\' Live Attention Status</string>
 </resources>

@@ -33,14 +33,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner"></com.github.mikephil.charting.charts.LineChart>
+            app:layout_constraintTop_toBottomOf="@+id/spinner"/>
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Select the particular session"
+            android:layout_marginTop="15sp"
+            android:hint="@string/select_session_to_view_graph"
             app:layout_constraintStart_toStartOf="@+id/spinner"
             app:layout_constraintTop_toTopOf="parent" />
 

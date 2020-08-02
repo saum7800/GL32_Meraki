@@ -16,8 +16,8 @@ import kotlinx.coroutines.*
 class HistoryViewModel(
     private val database: ScoreDatabaseDao,
     application: Application,
-    private val chart : LineChart
-
+    private val chart : LineChart,
+    private val date : String
 ): AndroidViewModel(application){
 
     private var myConverters=MyConverters()
@@ -30,7 +30,7 @@ class HistoryViewModel(
     init {
         uiScope.launch {
             withContext(Dispatchers.IO){
-                val cursor = database.getSimilarDates("%02-08-2020%")
+                val cursor = database.getSimilarDates("%$date%")
                 val temp : ArrayList<String> = arrayListOf()
                 temp.add(" ")
                 if(cursor.moveToFirst()){
