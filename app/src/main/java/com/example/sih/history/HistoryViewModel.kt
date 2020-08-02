@@ -35,17 +35,20 @@ class HistoryViewModel(
     init {
         uiScope.launch {
             withContext(Dispatchers.IO){
+                Log.i("mine","got cursor in launch")
                 val cursor = database.getSimilarDates("%02-08-2020%")
 
-
+                Log.i("mine","got cursor $cursor")
                 val temp : ArrayList<String> = arrayListOf()
-                temp.add(" ")
                 if(cursor.moveToFirst()){
+                    Log.i("mine","got cursor move to fr $cursor")
                     do{
-                        val student = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                        val student = cursor.getString(cursor.getColumnIndexOrThrow("id"))
+                        Log.i("mine","got cursor student $student")
                        temp.add(student)
                     }while (cursor.moveToNext())
                     cursor.close()
+                    Log.i("mine","got cursor temp file $temp")
                     _students.postValue(temp)
                 }
             }
@@ -55,18 +58,14 @@ class HistoryViewModel(
     fun getScores(date: String){
 
         uiScope.launch {
+            Log.i("mine","into getscore")
 
-            val score_string = database.getScoreByDate(date)
-            val list = myConverters.fromStringToList(score_string)
+
             val xValues : MutableList<String> = mutableListOf()
             val scores : MutableList<Entry> = mutableListOf()
-            //getScoresDB(date,xValues,scores)
-            if(list != null && list.isNotEmpty()) {
-                var i = 0
-                while (i < list.size){
-                    xValues.add(i.toString());
-                    scores.add(Entry(i.toFloat(), list[i].toFloat()))
-                }
+            getScoresDB(date,xValues,scores)
+            if(xValues.isNotEmpty()) {
+
 
                 chart.xAxis.valueFormatter = IndexAxisValueFormatter(xValues)
                 chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
@@ -93,14 +92,16 @@ class HistoryViewModel(
 
     private suspend fun getScoresDB(student : String, xValues : MutableList<String>, scores : MutableList<Entry> ){
         return withContext(Dispatchers.IO){
-           /** val temp =database.getScoreByStudent(student)
-            Log.d("History",temp.size.toString())
+           val tem =database.getScoreByDate(student)
+            val temp = myConverters.fromStringToList(tem)
             var i= 0
-            for (t in temp){
-                xValues.add(t.date)
-                scores.add(Entry(i.toFloat(), t.score.toFloat()))
-                i+=1
-            }**/
+            if (temp != null) {
+                for (t in temp){
+                    xValues.add(i.toString())
+                    scores.add(Entry(i.toFloat(), t.toFloat()))
+                    i+=1
+                }
+            }
 
         }
     }

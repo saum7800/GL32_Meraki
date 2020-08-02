@@ -45,10 +45,12 @@ class HistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val spinner = binding.spinner
         viewModel.students.observe(viewLifecycleOwner, Observer {
             if(it!=null && it.isNotEmpty()){
+                Log.i("mine","got cursor inside observer")
                 val adapter = ArrayAdapter(application,android.R.layout.simple_spinner_item,viewModel.students.value!!)
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 spinner.adapter= adapter
                 spinner.onItemSelectedListener=this
+                Log.i("mine","got cursor  observer done succesfully")
             }
         })
 
