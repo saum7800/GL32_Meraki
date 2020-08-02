@@ -25,7 +25,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
     // this counter will hold category count of each student
     var counterCollection = HashMap<String, Counter>()
     // this list will store all the mean_scores
-    var meanScoreArray = mutableListOf<Double>()
+
     private lateinit var set : BarDataSet
     private val fireBaseDatabase = Firebase.database
     private var teacherRef = fireBaseDatabase.reference.child("nameList").child("teacher_name")
@@ -33,7 +33,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
     private var viewModelJob = Job()
     private var uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private var  sessionId : String? = null
-    private var scores = mutableListOf<Long>()
+    private var scores = mutableListOf<Double>()
 
     private val currScores = StudentScore("","")
 
@@ -110,7 +110,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
     fun makeData(){
 
-        val scoreRef = fireBaseDatabase.reference.child("means_score")
+        //val scoreRef = fireBaseDatabase.reference.child("means_score")
         val myRef = fireBaseDatabase.reference.child("Teacher")
 
         val childEventListener = object : ChildEventListener{
@@ -207,6 +207,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
         myRef.addChildEventListener(childEventListener)
 
+        /*
         scoreRef.addValueEventListener(object: ValueEventListener{
             override fun onCancelled(error: DatabaseError) {
                 Log.w(TAG, "Failed to read value", error.toException())
@@ -220,7 +221,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                 //Log.d(TAG, "Value is score : $score")
             }
 
-        })
+        })*/
 
         meanScoreListener()
     }
@@ -235,16 +236,21 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
             override fun onDataChange(snapshot: DataSnapshot) {
                 val value = snapshot.getValue<Double>()
                 if (value != null){
-                    meanScoreArray.add(value.toDouble())
+                    scores.add(value.toDouble())
                     for(key in counterCollection.keys){
                         val index = counterCollection[key]?.currentState
                         counterCollection[key]!!.cArr[index!!] += 1
                     }
                 }
-                Log.d(TAG,"mean_value $meanScoreArray")
+                Log.d(TAG,"mean_value $scores")
             }
 
         })
+    }
+
+
+    fun getPercen(name: String){
+
     }
 
     override fun onCleared() {
