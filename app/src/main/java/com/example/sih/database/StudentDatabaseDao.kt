@@ -1,5 +1,6 @@
 package com.example.sih.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -11,6 +12,6 @@ interface StudentDatabaseDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(studentData: StudentData)
 
-   // @Query("SELECT * FROM student_history_table WHERE id LIKE '%' || :date")
-    //fun getStudentsBySession(date:String)
+   @Query("SELECT * FROM student_history_table WHERE id LIKE '%' || :date")
+    fun getStudentsBySession(date:String) : LiveData<List<StudentData>>
 }
