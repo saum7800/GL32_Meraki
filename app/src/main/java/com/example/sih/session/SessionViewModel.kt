@@ -156,7 +156,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                 _drowsy.postValue(drowsyList)
                 _inattentive.postValue(inattentiveList)
                 _attentive.postValue(attentivelist)
-                _inattentive.postValue(interactiveList)
+                _interactive.postValue(interactiveList)
                 val a = counterCollection["Surbhi"]?.cArr?.contentToString()
                 Log.d(TAG, "mean_counter $a")
 
