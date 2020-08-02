@@ -1,4 +1,31 @@
-fun makeData(){
+fun readFireBase(){
+
+        uiScope.launch {
+            withContext(Dispatchers.IO){
+
+                statusRef.addValueEventListener(object : ValueEventListener{
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.w(TAG, "Failed to read value", error.toException())
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val value = snapshot.getValue<String>()?.values
+                        if (value != "null") {
+                            // assign value to id
+                            makeData()
+                        }
+                        else{
+                            //history save etc
+                        }
+                    }
+
+                })
+            }
+            }
+        }
+
+
+    fun makeData(){
 
         val scoreRef = fireBaseDatabase.reference.child("means_score")
         val myRef = fireBaseDatabase.reference.child("Teacher")
