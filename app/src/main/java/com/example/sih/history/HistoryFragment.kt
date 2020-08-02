@@ -17,6 +17,7 @@ import com.example.sih.database.ScoreDatabase
 import com.example.sih.databinding.FragmentHistoryBinding
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.LineChart
+import kotlinx.android.synthetic.main.fragment_history.*
 
 class HistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
@@ -59,9 +60,9 @@ class HistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        val date = parent?.getItemAtPosition(position).toString()
-        Log.d("History", date)
-        viewModel.getScores(date)
+            val date = parent?.getItemAtPosition(position).toString()
+            Log.d("History", date)
+            viewModel.getScores(date)
     }
 
 }

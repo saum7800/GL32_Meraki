@@ -1,7 +1,11 @@
 <resources>
-    <string name="app_name">SIH</string>
+    <string name="app_name">Attention Stats</string>
     <string name="chart">Chart</string>
     <string name="view_current_session_scores">View Current Session Scores</string>
     <string name="view_student_history">View Student History</string>
     <string name="view_session_history">View Session History</string>
+    <string name="interactive">Interactive</string>
+    <string name="attentive">Attentive</string>
+    <string name="inattentive">Inattentive</string>
+    <string name="drowsy">Drowsy</string>
 </resources>

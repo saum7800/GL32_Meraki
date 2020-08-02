@@ -14,17 +14,11 @@ interface ScoreDatabaseDao {
     @Delete
     fun delete(studentScore: StudentScore)
 
-    @Query("SELECT * FROM score_history_table WHERE date= :date")
+    @Query("SELECT * FROM score_history_table WHERE id = :date")
     fun getScoreByDate(date: String) : List<StudentScore>
 
-    @Query("SELECT DISTINCT date FROM score_history_table")
+    @Query("SELECT id  FROM score_history_table")
     fun getDates(): Cursor
-
-    @Query("SELECT DISTINCT  name FROM score_history_table")
-    fun getNames(): Cursor
-
-    @Query("SELECT * FROM score_history_table WHERE name= :student")
-    fun getScoreByStudent(student : String) : List<StudentScore>
 
     @Query("DELETE FROM score_history_table")
     fun clear()

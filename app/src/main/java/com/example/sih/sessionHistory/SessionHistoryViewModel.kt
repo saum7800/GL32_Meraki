@@ -66,6 +66,8 @@ class SessionHistoryViewModel(
 
     fun getScores(date: String){
 
+        /**
+
         uiScope.launch {
             val xValues : MutableList<String> = mutableListOf()
             val scores : MutableList<BarEntry> = mutableListOf()
@@ -90,6 +92,7 @@ class SessionHistoryViewModel(
             }
 
         }
+        **/
 
     }
 
@@ -100,13 +103,13 @@ class SessionHistoryViewModel(
 
     private suspend fun getScoresDB(date : String, xValues : MutableList<String>, scores : MutableList<BarEntry>){
         return withContext(Dispatchers.IO){
-            val temp =database.getScoreByDate(date)
+           /** val temp =database.getScoreByDate(date)
             var i= 0
             for (t in temp){
                 xValues.add(t.name)
                 scores.add(BarEntry(i.toFloat(), t.score.toFloat()))
                 i+=1
-            }
+            }**/
 
         }
     }

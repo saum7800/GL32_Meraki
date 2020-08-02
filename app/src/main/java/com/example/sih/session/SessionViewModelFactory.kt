@@ -10,13 +10,12 @@ import java.lang.IllegalArgumentException
 
 class SessionViewModelFactory (
     private val dataSource: ScoreDatabaseDao,
-    private val application: Application,
-    private val chart : BarChart
+    private val application: Application
 ) : ViewModelProvider.Factory{
     @Suppress("unchecked cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(SessionViewModel::class.java)){
-            return SessionViewModel(dataSource,application,chart) as T
+            return SessionViewModel(dataSource,application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel")
     }

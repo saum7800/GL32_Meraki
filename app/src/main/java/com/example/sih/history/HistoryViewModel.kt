@@ -30,7 +30,7 @@ class HistoryViewModel(
     init {
         uiScope.launch {
             withContext(Dispatchers.IO){
-                val cursor  = database.getNames()
+               /** val cursor  = database.getNames()
                 val temp : ArrayList<String> = arrayListOf()
                 temp.add(" ")
                 if(cursor.moveToFirst()){
@@ -40,13 +40,13 @@ class HistoryViewModel(
                     }while (cursor.moveToNext())
                     cursor.close()
                     _students.postValue(temp)
-                }
+                }**/
             }
         }
     }
 
     fun getScores(date: String){
-
+        /**
         uiScope.launch {
              val xValues : MutableList<String> = mutableListOf()
              val scores : MutableList<Entry> = mutableListOf()
@@ -74,19 +74,19 @@ class HistoryViewModel(
             }
 
         }
-
+**/
     }
 
     private suspend fun getScoresDB(student : String, xValues : MutableList<String>, scores : MutableList<Entry> ){
         return withContext(Dispatchers.IO){
-            val temp =database.getScoreByStudent(student)
+           /** val temp =database.getScoreByStudent(student)
             Log.d("History",temp.size.toString())
             var i= 0
             for (t in temp){
                 xValues.add(t.date)
                 scores.add(Entry(i.toFloat(), t.score.toFloat()))
                 i+=1
-            }
+            }**/
 
         }
     }

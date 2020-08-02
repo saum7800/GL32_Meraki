@@ -1,20 +1,28 @@
 package com.example.sih.database
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 @Entity(tableName = "score_history_table")
 data class StudentScore(
 
-    @PrimaryKey val id : String,
+    @PrimaryKey var id : String,
 
-    @ColumnInfo(name = "name")
-    val name : String,
+    @TypeConverters(MyConverters::class)
+    @ColumnInfo(name = "student_score")
+    var studentScore : String?
 
-    @ColumnInfo(name = "score")
-    var score : Double = 0.0,
-
-    @ColumnInfo(name = "date")
-    val date : String
 )
+
+class MyConverters{
+
+    @TypeConverter
+    fun fromStringToList(value: String?) : List<Long>?{
+        return value?.split(",")?.map { it.trim().toLong() }
+    }
+
+    @TypeConverter
+    fun listToString(list : List<Long>?) : String?{
+
+        return list?.joinToString(",")
+    }
+}

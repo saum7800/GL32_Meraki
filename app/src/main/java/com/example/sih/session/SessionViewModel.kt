@@ -14,6 +14,7 @@ import com.anychart.AnyChartView
 import com.anychart.chart.common.dataentry.DataEntry
 import com.anychart.chart.common.dataentry.ValueDataEntry
 import com.anychart.charts.Cartesian
+import com.example.sih.database.MyConverters
 import com.example.sih.database.ScoreDatabaseDao
 import com.example.sih.database.StudentScore
 import com.github.mikephil.charting.charts.BarChart
@@ -31,10 +32,11 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class SessionViewModel(private val database: ScoreDatabaseDao,
-                       application: Application,
-                       private val chart : BarChart
+                       application: Application
+
 ): AndroidViewModel(application){
 
+    private var myConverters=MyConverters()
     var teachName = ""
     private lateinit var set : BarDataSet
     private val fireBaseDatabase = Firebase.database
@@ -42,72 +44,53 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
     private var statusRef =  fireBaseDatabase.reference.child("online")
     private var viewModelJob = Job()
     private var uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private var scores : MutableList<BarEntry> = mutableListOf()
-    private var students : HashMap<String, Float> = hashMapOf()
-    private val movingScores = HashMap<String, Double>()
-    var index = 0
+    private var  sessionId : String? = null
+    private var scores = mutableListOf<Long>()
 
-    init {
-        chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        chart.animateY(3000)
-        val xl = chart.xAxis
-        xl.setDrawGridLines(false)
-        xl.setAvoidFirstLastClipping(true)
-        val yl = chart.axisLeft
-        yl.setDrawGridLines(false)
-        yl.labelCount = 20
-        yl.axisMinimum = 0F
-        yl.axisMaximum = 100F
-        val yr = chart.axisRight
-        yr.setDrawGridLines(false)
-        yr.labelCount = 20
-        yr.axisMinimum = 0F
-        yr.axisMaximum = 100F
-        chart.invalidate()
+    private val currScores = StudentScore("","")
+
+    private val _drowsy = MutableLiveData<MutableList<String?>>()
+    val drowsy : LiveData<MutableList<String?>>
+        get() = _drowsy
+
+    private val _inattentive = MutableLiveData<MutableList<String?>>()
+    val inattentive : LiveData<MutableList<String?>>
+        get() = _inattentive
+
+    private val _attentive = MutableLiveData<MutableList<String?>>()
+    val attentive : LiveData<MutableList<String?>>
+        get() = _attentive
+
+    private val _interactive = MutableLiveData<MutableList<String?>>()
+    val interactive : LiveData<MutableList<String?>>
+        get() = _interactive
+
+
+    private fun clearDatabase(){
+        uiScope.launch {
+            withContext(Dispatchers.IO){
+                database.clear()
+            }
+        }
     }
 
-    private fun plot(){
-        chart.refreshDrawableState()
-        val r : Map<String,Float> = students.toList().sortedBy {
-            (_,value) -> value }.toMap()
-        chart.xAxis.valueFormatter = IndexAxisValueFormatter(r.keys)
-        chart.xAxis.labelCount = movingScores.size
-        set = BarDataSet(scores, "Student Set")
-        set.colors = getColor()
-        chart.data = BarData(set)
-        chart.notifyDataSetChanged()
-        chart.invalidate()
+    init {
+        _drowsy.value= mutableListOf()
+        _inattentive.value= mutableListOf()
+        _attentive.value= mutableListOf()
+        _interactive.value= mutableListOf()
     }
 
 
     fun saveHistory(){
         Log.d("History","History being saved")
-        val curr = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val date = curr.format(formatter)
         uiScope.launch {
             withContext(Dispatchers.IO){
-                for(student in movingScores){
-                    val s = StudentScore(student.key+date, student.key, student.value, date)
-                    database.insert(s)
-                }
+                currScores.id= sessionId as String
+                currScores.studentScore=myConverters.listToString(scores)
+                database.insert(currScores)
             }
         }
-    }
-
-    private fun getColor(): ArrayList<Int>{
-        Log.d("Session",movingScores.values.toString())
-        val color = ArrayList<Int>()
-        var i= 0
-        while(i < scores.size){
-            if(scores[i].y < 50f){
-                color.add(Color.parseColor("#E45353"))
-            }else{
-                color.add(Color.parseColor("#8BC856"))
-            }
-            i+=1
-        }
-        return color
     }
 
     fun readFireBase(){
@@ -115,49 +98,32 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         uiScope.launch {
             withContext(Dispatchers.IO){
 
-                teacherRef.addListenerForSingleValueEvent(object: ValueEventListener{
-                    override fun onCancelled(error: DatabaseError) {
-                        Log.w(TAG, "Failed to read value", error.toException())
-                    }
-
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val v = snapshot.getValue<HashMap<String, String>>()?.values
-                        if (v != null) {
-                            for (va in v){
-                                teachName = va.toString()
-                            }
-                        }
-                        makeData()
-                        Log.d(TAG, "Value is : $teachName")
-                    }
-                })
-
                 statusRef.addValueEventListener(object : ValueEventListener{
                     override fun onCancelled(error: DatabaseError) {
                         Log.w(TAG, "Failed to read value", error.toException())
                     }
 
                     override fun onDataChange(snapshot: DataSnapshot) {
-                        val value = snapshot.getValue<HashMap<String, Boolean>>()?.values
-                        if (value != null) {
-                            for(v in value){
-                                if(!v){
-                                    saveHistory()
-                                }
-                            }
+                        val v  = snapshot.getValue<String>()
+                        if (v != null) {
+                            sessionId = v
+                            makeData()
+                        }
+                        else{
+                            saveHistory()
                         }
                     }
 
                 })
             }
-            }
         }
+    }
 
 
     fun makeData(){
 
-        var myRef = fireBaseDatabase.reference.child("nameList").child("teacher_name")
-        myRef = fireBaseDatabase.reference.child(teachName.toString())
+        val scoreRef = fireBaseDatabase.reference.child("means_score")
+        val myRef = fireBaseDatabase.reference.child("Teacher")
 
         val childEventListener = object : ChildEventListener{
             override fun onCancelled(error: DatabaseError) {
@@ -170,36 +136,29 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val value = snapshot.key
-                val k = snapshot.getValue<Double>()
-                if(k != null){
-                    if (value != null) {
-                        val oldAvg : Long = movingScores[value.toString()]?.toLong() ?: 0
-                        val avg  = k.toDouble()
-                        movingScores[value.toString()] = avg
-                        scores[students[value.toString()]?.toInt()!!]=
-                            students[value.toString()]?.let { BarEntry(it,avg.toFloat()) }!!
-                        plot()
-                    }
+                _drowsy.value?.remove(value)
+                _inattentive.value?.remove(value)
+                _attentive.value?.remove(value)
+                _interactive.value?.remove(value)
+                when(snapshot.getValue<Long>()){
+                    0L -> _drowsy.value?.add(value)
+                    1L -> _inattentive.value?.add(value)
+                    2L -> _attentive.value?.add(value)
+                    else -> _inattentive.value?.add(value)
                 }
-                Log.d(TAG, "Value is : $value, $k")
             }
+
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val value = snapshot.key
-                val k = snapshot.getValue<Double>()
-                if(k != null){
-                    val avg = k.toDouble()
-                    movingScores[value.toString()] = avg
-                    students[value.toString()] = index.toFloat()
-                    students[value.toString()]?.let { BarEntry(it,avg.toFloat()) }?.let {
-                        scores.add(
-                            it
-                        )
-                    }
-                    index+=1
-                    plot()
+                Log.d("Category",value.toString()+"-"+snapshot.value.toString())
+                when(snapshot.getValue<Long>()){
+                    0L -> _drowsy.value?.add(value)
+                    1L -> _inattentive.value?.add(value)
+                    2L -> _attentive.value?.add(value)
+                    else -> _inattentive.value?.add(value)
                 }
-                Log.d(TAG, "Value is : $value, $k")
+                //Log.d(TAG, "Value is : $value, $k")
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
@@ -207,7 +166,23 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
             }
 
         }
+
         myRef.addChildEventListener(childEventListener)
+
+        scoreRef.addValueEventListener(object: ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(TAG, "Failed to read value", error.toException())
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val score = snapshot.getValue<Long>()
+                if (score != null) {
+                    scores.add(score)
+                }
+                //Log.d(TAG, "Value is score : $score")
+            }
+
+        })
     }
 
     override fun onCleared() {
