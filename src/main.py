@@ -1,7 +1,13 @@
-import cv2
-from chopper import chop
-from executor import process_and_upload
 from concurrent.futures.thread import ThreadPoolExecutor
+from itertools import repeat
+from threading import Thread
+
+import cv2
+
+from buffers import Buffer
+from chopper import chop
+from classifier import classify
+from executor import process_and_upload
 
 
 def show_images(imgs):
@@ -9,15 +15,26 @@ def show_images(imgs):
         cv2.imshow('img{}'.format(i), img)
 
 
-cap = cv2.VideoCapture("glrec.mp4")
-i = 0
-while cap.isOpened():
+buffer = Buffer()
+frame = None
+cap = cv2.VideoCapture("../FinalCut.mp4")
 
+
+def process_frame():
+    imgs = chop(frame)
+    buffer.reset_people()
+    with ThreadPoolExecutor() as master:
+        master.map(process_and_upload, imgs, repeat(buffer))
+    classes = classify(buffer)
+    buffer.set_pressences()
+
+
+processingThread = Thread(target=process_frame)
+while True:
     ret, frame = cap.read()
-    cv2.imshow("frame", frame)
+    cv2.imshow('frame', frame)
     cv2.waitKey(1)
-    if i > 3000:
-        imgs = chop(frame)
-        with ThreadPoolExecutor() as master:
-            master.map(process_and_upload, enumerate(imgs))
-    i += 1
+    if not processingThread.is_alive():
+        #cv2.imshow('processing', frame)
+        processingThread = Thread(target=process_frame)
+        processingThread.start()
