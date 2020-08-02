@@ -47,6 +47,7 @@ class SessionFragment : Fragment() {
         viewModel.readFireBase()
 
         drowsyAdapter = CardsAdapter()
+        binding.drowsyList.adapter= drowsyAdapter
         inattentiveAdapter = CardsAdapter()
         binding.inattentiveList.adapter=inattentiveAdapter
         attentiveAdapter = CardsAdapter()
@@ -58,8 +59,7 @@ class SessionFragment : Fragment() {
 
         viewModel.drowsy.observe(viewLifecycleOwner, Observer {
             it?.let {
-                    val temp = it
-                    drowsyAdapter.submitList(temp)
+                    drowsyAdapter.submitList(it)
                     Log.d("Session-Drowsy", it.toString())
                     drowsyAdapter.notifyDataSetChanged()
             }
