@@ -31,6 +31,10 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
     private var  sessionId : String? = null
     private var scores = mutableListOf<Double>()
 
+    private val _animBool = MutableLiveData<Boolean>()
+    val animBool : LiveData<Boolean>
+        get() = _animBool
+
     private val currScores = StudentScore("","")
 
     private val _drowsy = MutableLiveData<MutableList<Student?>>()
@@ -127,6 +131,10 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         }
     }
 
+    fun animDone(){
+        _animBool.value=false
+    }
+
 
     fun makeData(){
 
@@ -156,6 +164,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
                 when(snapshot.getValue<Long>()){
                     0L -> {
+                        _animBool.value = true
                         counterCollection[key.toString()]?.currentState = 0
                         drowsyList?.add(value)
                     }
@@ -190,6 +199,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                 Log.d("Category",value.toString()+"-"+snapshot.value.toString())
                 when(snapshot.getValue<Long>()){
                     0L -> {
+                        _animBool.value = true
                         counterCollection[key.toString()]!!.currentState = 0
                         val temp = _drowsy.value
                         temp?.add(value)

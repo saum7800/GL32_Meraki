@@ -66,7 +66,6 @@ class SessionFragment : Fragment() {
                     drowsyAdapter.submitList(it)
                     Log.d("Session-Drowsy", it.toString())
                     drowsyAdapter.notifyDataSetChanged()
-                    blink()
             }
         })
 
@@ -94,15 +93,22 @@ class SessionFragment : Fragment() {
                 interactiveAdapter.notifyDataSetChanged()
             }
         })
+
+        viewModel.animBool.observe(viewLifecycleOwner, Observer {
+            if(it==true){
+                blink()
+                viewModel.animDone()
+            }
+        })
         return binding.root
     }
 
-    fun blink(){
+    private fun blink(){
         val anim = ObjectAnimator.ofInt(
-            drowsyList, "backgroundColor", Color.WHITE, Color.RED,
+            drowsyList, "backgroundColor", Color.WHITE, Color.parseColor("#30FF0000"),
             Color.WHITE
         )
-        anim.duration = 1500
+        anim.duration = 1000
         anim.setEvaluator(ArgbEvaluator())
         anim.start()
     }
