@@ -16,12 +16,12 @@ data class StudentScore(
 class MyConverters{
 
     @TypeConverter
-    fun fromStringToList(value: String?) : List<Long>?{
-        return value?.split(",")?.map { it.trim().toLong() }
+    fun fromStringToList(value: String?) : List<Double>?{
+        return value?.split(",")?.map { it.trim().toDouble() }
     }
 
     @TypeConverter
-    fun listToString(list : List<Long>?) : String?{
+    fun listToString(list : List<Double>?) : String?{
 
         return list?.joinToString(",")
     }
