@@ -15,7 +15,7 @@ def classify(buffer):
     scores = defaultdict(lambda: 0)
     for name in buffer.this_frame_people:
         mean_var = np.mean(buffer.lip_variances[name]) if len(buffer.lip_variances[name])!=0 else 0
-        mean_orient = np.mean(buffer.attention_scores[name]) if len(buffer.attention_scores[name])!=0 else 0.5
+        mean_orient = np.mean(buffer.orientation_scores[name]) if len(buffer.orientation_scores[name]) != 0 else 0.5
         if any(buffer.yawns[name]):
             classes[name] = AttentionClass.DROWSY
             #print("{} yawned".format(name))
