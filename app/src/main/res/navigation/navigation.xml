@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navigation"
+    app:startDestination="@id/dashboardFragment">
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.example.sih.dashboard.DashboardFragment"
+        android:label="Dashboard">
+        <action
+            android:id="@+id/action_dashboardFragment_to_sessionFragment"
+            app:destination="@id/sessionFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popExitAnim="@anim/fragment_fade_exit"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_historyFragment"
+            app:destination="@id/historyFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popExitAnim="@anim/fragment_fade_exit"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_sessionHistoryFragment"
+            app:destination="@id/sessionHistoryFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.example.sih.history.HistoryFragment"
+        android:label="Student History" />
+    <fragment
+        android:id="@+id/sessionFragment"
+        android:name="com.example.sih.session.SessionFragment"
+        android:label="Session" />
+    <fragment
+        android:id="@+id/sessionHistoryFragment"
+        android:name="com.example.sih.sessionHistory.SessionHistoryFragment"
+        android:label="Session History" />
+</navigation>

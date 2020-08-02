@@ -1,0 +1,24 @@
+fun checkIfOffline(){
+        var myRef = fireBaseDatabase.reference.child("online")
+
+        var listner = object : ValueEventListener1 {
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(TAG, "Failed to read value", error.toException())
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                //TODO("Not yet implemented")
+                val value = snapshot.getValue<HashMap<String, Boolean>>()?.values
+                if (value != null) {
+                    for(v in value){
+                        if(!v){
+                            //call your function
+                        }
+                    }
+                }
+            }
+
+        }
+
+        myRef.addValueEventListener(listner)
+    }
