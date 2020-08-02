@@ -1,35 +1,20 @@
 package com.example.sih.session
 
 import android.app.Application
-import android.content.ContentValues
 import android.content.ContentValues.TAG
-import android.graphics.Color
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.anychart.AnyChartView
-import com.anychart.chart.common.dataentry.DataEntry
-import com.anychart.chart.common.dataentry.ValueDataEntry
-import com.anychart.charts.Cartesian
 import com.example.sih.database.MyConverters
 import com.example.sih.database.ScoreDatabaseDao
 import com.example.sih.database.StudentScore
-import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class SessionViewModel(private val database: ScoreDatabaseDao,
                        application: Application
@@ -38,9 +23,9 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
     private var myConverters=MyConverters()
     // this counter will hold category count of each student
-    var CounterCollection = HashMap<String, Counter>()
+    var counterCollection = HashMap<String, Counter>()
     // this list will store all the mean_scores
-    var mean_score_array = mutableListOf<Double>()
+    var meanScoreArray = mutableListOf<Double>()
     private lateinit var set : BarDataSet
     private val fireBaseDatabase = Firebase.database
     private var teacherRef = fireBaseDatabase.reference.child("nameList").child("teacher_name")
@@ -138,79 +123,74 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                val key = snapshot.key.toString()
-                val value = snapshot.key?.let { Student(it) }
-                var toDelete = _drowsy.value
-                toDelete?.remove(value)
-                _drowsy.postValue(toDelete)
-                toDelete = _inattentive.value
-                toDelete?.remove(value)
-                _inattentive.postValue(toDelete)
-                toDelete = _attentive.value
-                toDelete?.remove(value)
-                _attentive.postValue(toDelete)
-                toDelete = _interactive.value
-                toDelete?.remove(value)
-                _interactive.postValue(toDelete)
+                val key = snapshot.key
+                val value = key?.let { Student(it) }
+                var drowsyList = _drowsy.value
+                drowsyList?.remove(value)
+                var inattentiveList = _inattentive.value
+                inattentiveList?.remove(value)
+                var attentivelist = _attentive.value
+                attentivelist?.remove(value)
+                var interactiveList = _interactive.value
+                interactiveList?.remove(value)
+
                 when(snapshot.getValue<Long>()){
                     0L -> {
-                        CounterCollection[key]?.currentState = 0
-                        toDelete = _drowsy.value
-                        toDelete?.add(value)
-                        _drowsy.postValue(toDelete)
-
+                        counterCollection[key.toString()]?.currentState = 0
+                        drowsyList?.add(value)
                     }
                     1L -> {
-                        CounterCollection[key]?.currentState = 1
-                        toDelete = _inattentive.value
-                        toDelete?.add(value)
-                        _inattentive.postValue(toDelete)
+                        counterCollection[key.toString()]?.currentState = 1
+                        inattentiveList?.add(value)
                     }
                     2L -> {
-                        CounterCollection[key]?.currentState = 2
-                        toDelete = _attentive.value
-                        toDelete?.add(value)
-                        _attentive.postValue(toDelete)
+                        counterCollection[key.toString()]?.currentState = 2
+                        attentivelist?.add(value)
                     }
                     else -> {
-                        CounterCollection[key]?.currentState = 3
-                        toDelete = _interactive.value
-                        toDelete?.add(value)
-                        _interactive.postValue(toDelete)
+                        counterCollection[key.toString()]?.currentState = 3
+                        interactiveList?.add(value)
                     }
                 }
+
+                _drowsy.postValue(drowsyList)
+                _inattentive.postValue(inattentiveList)
+                _attentive.postValue(attentivelist)
+                _inattentive.postValue(interactiveList)
+                val a = counterCollection["Surbhi"]?.cArr?.contentToString()
+                Log.d(TAG, "mean_counter $a")
 
             }
 
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val key = snapshot.key
-                CounterCollection[key.toString()] = Counter()
+                counterCollection[key.toString()] = Counter()
                 val value = key?.let { Student(it) }
                 Log.d("Category",value.toString()+"-"+snapshot.value.toString())
                 when(snapshot.getValue<Long>()){
                     0L -> {
-                        CounterCollection[key.toString()]!!.currentState = 0
+                        counterCollection[key.toString()]!!.currentState = 0
                         val temp = _drowsy.value
                         temp?.add(value)
                         _drowsy.postValue(temp)
                     }
                     1L -> {
 
-                        CounterCollection[key.toString()]!!.currentState = 1
+                        counterCollection[key.toString()]!!.currentState = 1
                         val temp = _inattentive.value
                         temp?.add(value)
                         _inattentive.postValue(temp)
                     }
                     2L -> {
 
-                        CounterCollection[key.toString()]!!.currentState = 1
+                        counterCollection[key.toString()]!!.currentState = 1
                         val temp = _attentive.value
                         temp?.add(value)
                         _attentive.postValue(temp)
                     }
                     else -> {
-                        CounterCollection[key.toString()]!!.currentState = 1
+                        counterCollection[key.toString()]!!.currentState = 1
                         val temp = _interactive.value
                         temp?.add(value)
                         _interactive.postValue(temp)
@@ -254,20 +234,14 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 val value = snapshot.getValue<Double>()
-
                 if (value != null){
-                    mean_score_array.add(value.toDouble())
-                    for(key in CounterCollection.keys){
-                        val index = CounterCollection[key]?.currentState
-                        CounterCollection[key]!!.cArr[index!!] += 1
-                        if(key == "Surbhi"){
-                            val a = CounterCollection["Surbhi"]?.cArr?.contentToString()
-                            Log.d(TAG, "mean_counter $a")
-                        }
-
+                    meanScoreArray.add(value.toDouble())
+                    for(key in counterCollection.keys){
+                        val index = counterCollection[key]?.currentState
+                        counterCollection[key]!!.cArr[index!!] += 1
                     }
                 }
-                Log.d(TAG,"mean_value $mean_score_array")
+                Log.d(TAG,"mean_value $meanScoreArray")
             }
 
         })
