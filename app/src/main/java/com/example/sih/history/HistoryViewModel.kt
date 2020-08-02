@@ -35,7 +35,7 @@ class HistoryViewModel(
     init {
         uiScope.launch {
             withContext(Dispatchers.IO){
-                val cursor = database.getDates()
+                val cursor = database.getSimilarDates("%02-08-2020%")
 
 
                 val temp : ArrayList<String> = arrayListOf()
