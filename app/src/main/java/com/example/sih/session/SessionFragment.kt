@@ -58,8 +58,7 @@ class SessionFragment : Fragment() {
 
         viewModel.drowsy.observe(viewLifecycleOwner, Observer {
             it?.let {
-                    val temp = it
-                    drowsyAdapter.submitList(temp)
+                    drowsyAdapter.submitList(it)
                     Log.d("Session-Drowsy", it.toString())
                     drowsyAdapter.notifyDataSetChanged()
             }
