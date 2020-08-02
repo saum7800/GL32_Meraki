@@ -138,42 +138,47 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                val key = snapshot.key
-                val value = key?.let { Student(it) }
-                var drowsyList = _drowsy.value
-                drowsyList?.remove(value)
-                var inattentiveList = _inattentive.value
-                inattentiveList?.remove(value)
-                var attentivelist = _attentive.value
-                attentivelist?.remove(value)
-                var interactiveList = _interactive.value
-                interactiveList?.remove(value)
-
+                val key = snapshot.key.toString()
+                val value = snapshot.key?.let { Student(it) }
+                var toDelete = _drowsy.value
+                toDelete?.remove(value)
+                _drowsy.postValue(toDelete)
+                toDelete = _inattentive.value
+                toDelete?.remove(value)
+                _inattentive.postValue(toDelete)
+                toDelete = _attentive.value
+                toDelete?.remove(value)
+                _attentive.postValue(toDelete)
+                toDelete = _interactive.value
+                toDelete?.remove(value)
+                _interactive.postValue(toDelete)
                 when(snapshot.getValue<Long>()){
                     0L -> {
-                        CounterCollection[key.toString()]?.currentState = 0
-                        drowsyList?.add(value)
+                        CounterCollection[key]?.currentState = 0
+                        toDelete = _drowsy.value
+                        toDelete?.add(value)
+                        _drowsy.postValue(toDelete)
+
                     }
                     1L -> {
-                        CounterCollection[key.toString()]?.currentState = 1
-                        inattentiveList?.add(value)
+                        CounterCollection[key]?.currentState = 1
+                        toDelete = _inattentive.value
+                        toDelete?.add(value)
+                        _inattentive.postValue(toDelete)
                     }
                     2L -> {
-                        CounterCollection[key.toString()]?.currentState = 2
-                        attentivelist?.add(value)
+                        CounterCollection[key]?.currentState = 2
+                        toDelete = _attentive.value
+                        toDelete?.add(value)
+                        _attentive.postValue(toDelete)
                     }
                     else -> {
-                        CounterCollection[key.toString()]?.currentState = 3
-                        interactiveList?.add(value)
+                        CounterCollection[key]?.currentState = 3
+                        toDelete = _interactive.value
+                        toDelete?.add(value)
+                        _interactive.postValue(toDelete)
                     }
                 }
-
-                _drowsy.postValue(drowsyList)
-                _inattentive.postValue(inattentiveList)
-                _attentive.postValue(attentivelist)
-                _inattentive.postValue(interactiveList)
-                val a = CounterCollection["Surbhi"]?.cArr?.contentToString()
-                Log.d(TAG, "mean_counter $a")
 
             }
 
@@ -249,11 +254,17 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 val value = snapshot.getValue<Double>()
+
                 if (value != null){
                     mean_score_array.add(value.toDouble())
                     for(key in CounterCollection.keys){
                         val index = CounterCollection[key]?.currentState
                         CounterCollection[key]!!.cArr[index!!] += 1
+                        if(key == "Surbhi"){
+                            val a = CounterCollection["Surbhi"]?.cArr?.contentToString()
+                            Log.d(TAG, "mean_counter $a")
+                        }
+
                     }
                 }
                 Log.d(TAG,"mean_value $mean_score_array")
