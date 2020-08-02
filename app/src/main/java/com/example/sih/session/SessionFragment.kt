@@ -47,6 +47,7 @@ class SessionFragment : Fragment() {
         viewModel.readFireBase()
 
         drowsyAdapter = CardsAdapter()
+        binding.drowsyList.adapter= drowsyAdapter
         inattentiveAdapter = CardsAdapter()
         binding.inattentiveList.adapter=inattentiveAdapter
         attentiveAdapter = CardsAdapter()
