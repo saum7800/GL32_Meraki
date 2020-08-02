@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sih.R
 import com.example.sih.database.ScoreDatabase
+import com.example.sih.database.StudentDatabase
 import com.example.sih.databinding.FragmentSessionPlotBinding
 import com.github.mikephil.charting.charts.BarChart
 import kotlinx.android.synthetic.main.fragment_session_plot.*
@@ -39,7 +40,8 @@ class SessionFragment : Fragment() {
 
         val application = requireNotNull(this.activity).application
         val dataSource = ScoreDatabase.getInstance(application).scoreDatabaseDao
-        viewModelFactory = SessionViewModelFactory(dataSource, application)
+        val studentDatabaseDao = StudentDatabase.getInstance(application).studentDatabaseDao
+        viewModelFactory = SessionViewModelFactory(dataSource, application,studentDatabaseDao)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SessionViewModel::class.java)
         binding.lifecycleOwner = this
 
@@ -95,6 +97,7 @@ class SessionFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         viewModel.saveHistory()
+        viewModel.saveStudentHistory()
     }
 }
 

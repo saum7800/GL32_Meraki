@@ -6,9 +6,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.sih.database.MyConverters
-import com.example.sih.database.ScoreDatabaseDao
-import com.example.sih.database.StudentScore
+import com.example.sih.database.*
 import com.github.mikephil.charting.data.BarDataSet
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
@@ -17,15 +15,13 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 
 class SessionViewModel(private val database: ScoreDatabaseDao,
-                       application: Application
-
+                       application: Application,
+                       private val studentDatabase: StudentDatabaseDao
 ): AndroidViewModel(application){
 
     private var myConverters=MyConverters()
     // this counter will hold category count of each student
     var counterCollection = HashMap<String, Counter>()
-    // this list will store all the mean_scores
-
     private lateinit var set : BarDataSet
     private val fireBaseDatabase = Firebase.database
     private var teacherRef = fireBaseDatabase.reference.child("nameList").child("teacher_name")
@@ -53,6 +49,12 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
     val interactive : LiveData<MutableList<Student?>>
         get() = _interactive
 
+    init {
+        _drowsy.value = mutableListOf()
+        _inattentive.value = mutableListOf()
+        _attentive.value = mutableListOf()
+        _interactive.value = mutableListOf()
+    }
 
     private fun clearDatabase(){
         uiScope.launch {
@@ -62,11 +64,26 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         }
     }
 
-    init {
-        _drowsy.value= mutableListOf()
-        _inattentive.value= mutableListOf()
-        _attentive.value= mutableListOf()
-        _interactive.value= mutableListOf()
+    private fun getList(){
+        uiScope.launch {
+            withContext(Dispatchers.IO){
+                val t = myConverters.fromStringToList(sessionId?.let { database.getScoreByDate(it) })
+                if(t!=null)
+                    scores= t as MutableList<Double>
+            }
+        }
+    }
+
+    fun saveStudentHistory(){
+        Log.d("History","Student History being saved")
+        uiScope.launch {
+            withContext(Dispatchers.IO){
+                for ((key,value) in counterCollection){
+                    val studentData = StudentData("$sessionId,$key" , value.cArr[0], value.cArr[1], value.cArr[2], value.cArr[3])
+                    studentDatabase.insert(studentData)
+                }
+            }
+        }
     }
 
 
@@ -95,10 +112,12 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                         val v  = snapshot.getValue<String>()
                         if (v != null) {
                             sessionId = v
+                            getList()
                             makeData()
                         }
                         else{
                             saveHistory()
+                            saveStudentHistory()
                         }
                     }
 
@@ -211,7 +230,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
         meanScoreListener()
     }
 
-    fun meanScoreListener(){
+    private fun meanScoreListener(){
         val scoreRef = fireBaseDatabase.reference.child("means_score")
         scoreRef.addValueEventListener(object : ValueEventListener{
             override fun onCancelled(error: DatabaseError) {
@@ -231,11 +250,6 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
             }
 
         })
-    }
-
-
-    fun getPercen(name: String){
-
     }
 
     override fun onCleared() {

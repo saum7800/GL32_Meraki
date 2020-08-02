@@ -7,7 +7,6 @@ import androidx.room.RoomDatabase
 
 
 @Database(entities = [StudentData :: class], version = 1 , exportSchema = false)
-
 abstract class StudentDatabase : RoomDatabase() {
 
     abstract val studentDatabaseDao : StudentDatabaseDao
@@ -20,7 +19,7 @@ abstract class StudentDatabase : RoomDatabase() {
 
         fun getInstance(context: Context) : StudentDatabase {
 
-            kotlin.synchronized(this) {
+            synchronized(this) {
 
                 var instance = INSTANCE
 

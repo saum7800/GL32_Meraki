@@ -17,7 +17,7 @@ abstract class ScoreDatabase : RoomDatabase() {
 
     fun getInstance(context: Context) : ScoreDatabase {
 
-        kotlin.synchronized(this) {
+        synchronized(this) {
 
             var instance = INSTANCE
 
