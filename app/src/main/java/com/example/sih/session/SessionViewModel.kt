@@ -70,6 +70,7 @@ class SessionViewModel(private val database: ScoreDatabaseDao,
                 val t = myConverters.fromStringToList(sessionId?.let { database.getScoreByDate(it) })
                 if(t!=null)
                     scores= t as MutableList<Double>
+                Log.i("mine","am i getting score $t")
             }
         }
     }

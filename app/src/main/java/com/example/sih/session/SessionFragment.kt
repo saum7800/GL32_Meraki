@@ -1,20 +1,22 @@
 package com.example.sih.session
 
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sih.R
 import com.example.sih.database.ScoreDatabase
 import com.example.sih.database.StudentDatabase
 import com.example.sih.databinding.FragmentSessionPlotBinding
-import com.github.mikephil.charting.charts.BarChart
 import kotlinx.android.synthetic.main.fragment_session_plot.*
 
 
@@ -64,6 +66,7 @@ class SessionFragment : Fragment() {
                     drowsyAdapter.submitList(it)
                     Log.d("Session-Drowsy", it.toString())
                     drowsyAdapter.notifyDataSetChanged()
+                    blink()
             }
         })
 
@@ -92,6 +95,16 @@ class SessionFragment : Fragment() {
             }
         })
         return binding.root
+    }
+
+    fun blink(){
+        val anim = ObjectAnimator.ofInt(
+            drowsyList, "backgroundColor", Color.WHITE, Color.RED,
+            Color.WHITE
+        )
+        anim.duration = 1500
+        anim.setEvaluator(ArgbEvaluator())
+        anim.start()
     }
 
     override fun onPause() {
