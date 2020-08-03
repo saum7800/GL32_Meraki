@@ -12,15 +12,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.sih.R
 import com.example.sih.database.ScoreDatabase
+import com.example.sih.database.StudentData
+import com.example.sih.database.StudentDatabase
 import com.example.sih.databinding.FragmentStudentHistoryBinding
 import com.github.mikephil.charting.charts.LineChart
 
-class StudentHistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
+class StudentHistoryFragment : Fragment(){
 
     private lateinit var binding : FragmentStudentHistoryBinding
     private lateinit var viewModel: StudentHistoryViewModel
     private lateinit var viewModelFactory : StudentHistoryViewModelFactory
-    private lateinit var chart : LineChart
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,34 +33,12 @@ class StudentHistoryFragment : Fragment(), AdapterView.OnItemSelectedListener {
             inflater, R.layout.fragment_student_history,container,false
         )
         val application = requireNotNull(this.activity).application
-        val dataSource = ScoreDatabase.getInstance(application).scoreDatabaseDao
-        val chart = binding.sessionHistoryChart
-        viewModelFactory = StudentHistoryViewModelFactory(dataSource,application,chart)
+        val dataSource = StudentDatabase.getInstance(application).studentDatabaseDao
+        viewModelFactory = StudentHistoryViewModelFactory(dataSource,application)
         viewModel = ViewModelProvider(this,viewModelFactory).get(StudentHistoryViewModel::class.java)
         binding.lifecycleOwner=this
 
-        val spinner = binding.spinner
-        viewModel.dates.observe(viewLifecycleOwner, Observer {
-            if(it!=null && it.isNotEmpty()){
-                val adapter = ArrayAdapter(application,android.R.layout.simple_spinner_item,viewModel.dates.value!!)
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinner.adapter= adapter
-                spinner.onItemSelectedListener=this
-            }
-        })
-
         return binding.root
-    }
-
-
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-        //Nothing
-    }
-
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        //val date = parent?.getItemAtPosition(position).toString()
-        //viewModel.getScores(date)
     }
 
 }

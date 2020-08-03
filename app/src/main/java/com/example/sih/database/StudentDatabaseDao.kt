@@ -12,6 +12,11 @@ interface StudentDatabaseDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(studentData: StudentData)
 
-   @Query("SELECT * FROM student_history_table WHERE id LIKE '%' || :date")
-    fun getStudentsBySession(date:String) : LiveData<List<StudentData>>
+   @Query("SELECT * FROM student_history_table WHERE id LIKE :name")
+    fun getSessionByStudents(name:String) : LiveData<List<StudentData>>
+
+    @Query("SELECT * FROM student_history_table")
+    fun getIds(): MutableList<StudentData>
+
+
 }

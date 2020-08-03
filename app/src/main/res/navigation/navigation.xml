@@ -22,10 +22,8 @@
             app:popExitAnim="@anim/fragment_fade_exit"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_dashboardFragment_to_sessionHistoryFragment"
-            app:destination="@id/sessionHistoryFragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit" />
+            android:id="@+id/action_dashboardFragment_to_studentList"
+            app:destination="@id/studentList" />
     </fragment>
     <fragment
         android:id="@+id/historyFragment"
@@ -40,7 +38,21 @@
         android:name="com.example.sih.session.SessionFragment"
         android:label="Session" />
     <fragment
-        android:id="@+id/sessionHistoryFragment"
+        android:id="@+id/studentHistoryFragment"
         android:name="com.example.sih.studentHistory.StudentHistoryFragment"
-        android:label="Session History" />
+        android:label="Student History" >
+        <argument
+            android:name="student"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/studentList"
+        android:name="com.example.sih.studentList.StudentList"
+        android:label="StudentList" >
+        <action
+            android:id="@+id/action_studentList_to_studentHistoryFragment"
+            app:destination="@id/studentHistoryFragment"
+            app:popUpTo="@id/dashboardFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

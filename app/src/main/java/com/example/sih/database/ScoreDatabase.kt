@@ -3,7 +3,7 @@ package com.example.sih.database
 import android.content.Context
 import androidx.room.*
 
-@Database(entities = [StudentScore :: class], version = 1 , exportSchema = false)
+@Database(entities = [StudentScore :: class], version = 4 , exportSchema = false)
 
 abstract class ScoreDatabase : RoomDatabase() {
 

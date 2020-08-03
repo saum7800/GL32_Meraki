@@ -13,4 +13,5 @@
     <string name="session_history">Session History</string>
     <string name="live_session">Live Session</string>
     <string name="watch_students_live_attention_status">Watch Students\' Live Attention Status</string>
+    <string name="student_history">Student History</string>
 </resources>

@@ -5,22 +5,26 @@
         <variable
             name="student"
             type="com.example.sih.session.Student" />
+        <variable
+            name="clickListener"
+            type="com.example.sih.studentList.Listener" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foregroundTint="#00F8F5F5">
+        android:foregroundTint="#00F8F5F5"
+        android:onClick="@{()->clickListener.onClick(student)}">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/student_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
-            android:padding="5dp"
+            android:layout_marginBottom="5dp"
+            android:padding="10dp"
             android:textAlignment="center"
             android:text="@{student.name}"
-            android:background="#30965DE8"
+            android:background="#10965DE8"
             android:textSize="18sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

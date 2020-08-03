@@ -6,15 +6,15 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.sih.database.ScoreDatabaseDao
+import com.example.sih.database.StudentDatabaseDao
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import kotlinx.coroutines.*
 
 class StudentHistoryViewModel(
-    private val database: ScoreDatabaseDao,
-    application: Application,
-    private val chart : BarChart
+    private val database: StudentDatabaseDao,
+    application: Application
 ):
     AndroidViewModel(application){
 
