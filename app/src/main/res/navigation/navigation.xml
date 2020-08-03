@@ -10,7 +10,7 @@
         <action
             android:id="@+id/action_dashboardFragment_to_sessionFragment"
             app:destination="@id/sessionFragment"
-            app:enterAnim="@anim/fragment_fade_enter"
+            app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@anim/fragment_fade_exit"
             app:popExitAnim="@anim/fragment_fade_exit"
             app:popUpToInclusive="true" />
@@ -23,7 +23,9 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_dashboardFragment_to_studentList"
-            app:destination="@id/studentList" />
+            app:destination="@id/studentList"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit" />
     </fragment>
     <fragment
         android:id="@+id/historyFragment"
@@ -52,7 +54,11 @@
         <action
             android:id="@+id/action_studentList_to_studentHistoryFragment"
             app:destination="@id/studentHistoryFragment"
-            app:popUpTo="@id/dashboardFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit"
+            app:popUpTo="@id/studentList"
             app:popUpToInclusive="true" />
     </fragment>
 </navigation>

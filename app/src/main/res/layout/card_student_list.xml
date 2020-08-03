@@ -20,7 +20,7 @@
             android:padding="5dp"
             android:textAlignment="center"
             android:text="@{student.name}"
-            android:background="#30965DE8"
+            android:background="#30A67AE6"
             android:textSize="18sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

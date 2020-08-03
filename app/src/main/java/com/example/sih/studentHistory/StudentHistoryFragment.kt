@@ -22,6 +22,7 @@ class StudentHistoryFragment : Fragment(){
     private lateinit var binding : FragmentStudentHistoryBinding
     private lateinit var viewModel: StudentHistoryViewModel
     private lateinit var viewModelFactory : StudentHistoryViewModelFactory
+    private lateinit var adapter: StudentHistAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,9 +35,20 @@ class StudentHistoryFragment : Fragment(){
         )
         val application = requireNotNull(this.activity).application
         val dataSource = StudentDatabase.getInstance(application).studentDatabaseDao
-        viewModelFactory = StudentHistoryViewModelFactory(dataSource,application)
+        val name = StudentHistoryFragmentArgs.fromBundle(requireArguments()).student
+        viewModelFactory = StudentHistoryViewModelFactory(dataSource,application,name)
         viewModel = ViewModelProvider(this,viewModelFactory).get(StudentHistoryViewModel::class.java)
         binding.lifecycleOwner=this
+
+        adapter = StudentHistAdapter()
+        binding.studentHistList.adapter=adapter
+
+        viewModel.session.observe(viewLifecycleOwner, Observer {
+            if(it!=null){
+                adapter.submitList(it)
+                adapter.notifyDataSetChanged()
+            }
+        })
 
         return binding.root
     }

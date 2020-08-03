@@ -109,7 +109,7 @@ class SessionFragment : Fragment() {
             drowsyList, "backgroundColor", Color.WHITE, Color.parseColor("#70FF0000"),
             Color.WHITE
         )
-        anim.duration = 1500
+        anim.duration = 2000
         anim.setEvaluator(ArgbEvaluator())
         anim.start()
     }

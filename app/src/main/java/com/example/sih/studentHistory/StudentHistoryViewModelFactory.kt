@@ -11,12 +11,13 @@ import java.lang.IllegalArgumentException
 
 class StudentHistoryViewModelFactory (
     private val dataSource: StudentDatabaseDao,
-    private val application: Application
+    private val application: Application,
+    private val name : String
 ) : ViewModelProvider.Factory{
     @Suppress("unchecked cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(StudentHistoryViewModel::class.java)){
-            return StudentHistoryViewModel(dataSource,application) as T
+            return StudentHistoryViewModel(dataSource,application,name) as T
         }
         throw IllegalArgumentException("Unknown ViewModel")
     }
