@@ -2,6 +2,8 @@ package com.example.sih.history
 
 import android.app.Application
 import android.graphics.Color
+import android.util.Log
+import androidx.core.database.getStringOrNull
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -31,14 +33,41 @@ class HistoryViewModel(
     init {
         uiScope.launch {
             withContext(Dispatchers.IO){
-                try{
-                val cursor = database.getSimilarDates("%$date%")
+
+                val temp : ArrayList<String> = arrayListOf()
+                try {
+                    val d = "%$date%"
+                    val cursor = database.getSimilarDates(d)
+                    if (cursor.moveToFirst()) {
+                        do {
+                            var student = cursor.getStringOrNull(cursor.getColumnIndexOrThrow("id"))
+                            if (student != null)
+                                temp.add(student)
+                            /*
+                            var c = database.getScoreByDate(a.toString())
+                            var b = { cursor.getColumnIndex("id") }
+                            var d = myConverters.fromStringToList(c)
+                            var e = d.toString()
+                            Log.d("TT", "id ares $e")**/
+
+
+                        } while (cursor.moveToNext())
+                        Log.d("templog", "templog $temp")
+                        _students.postValue(temp)
+                    }
+                }
+                catch (e : Exception){
+                }
+            }
+
+                /*
                 val temp : ArrayList<String> = arrayListOf()
                 temp.add(" ")
-                if(cursor != null  && cursor.count >0) {
+                if(cursor.count >0) {
                     do {
                         cursor.moveToFirst();
                         val student = cursor.getString(cursor.getColumnIndex("id"))
+
                         if (student != null)
                             temp.add(student)
                     } while (cursor.moveToNext())
@@ -48,7 +77,7 @@ class HistoryViewModel(
                 }catch(e: Exception){
 
                 }
-            }
+            }*/
         }
     }
 
@@ -69,10 +98,19 @@ class HistoryViewModel(
            val temp =database.getScoreByDate(date)
             val list = myConverters.fromStringToList(temp)
             var i= 0
+            var avg = mutableListOf<Double>()
             if (list != null) {
                 for (t in list){
-                    xValues.add(i.toString())
-                    scores.add(Entry(i.toFloat(), t.toFloat()))
+                    if(i < 5){
+                        avg.add(t)
+                    }else{
+                        avg.add(t)
+                        xValues.add(i.toString())
+                        scores.add(Entry(i.toFloat(), (avg.sum()/avg.size).toFloat()))
+                        avg.removeAt(0)
+                    }
+
+
                     i+=1
                 }
 

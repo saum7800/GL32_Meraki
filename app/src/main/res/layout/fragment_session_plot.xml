@@ -70,6 +70,7 @@
                             android:layout_height="0dp"
                             android:foregroundTint="#E10D0D"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/appCompatImageView" />
@@ -130,6 +131,7 @@
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/inattentiveList"
                             android:layout_width="match_parent"
+
                             android:layout_height="0dp"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             app:layout_constraintTop_toBottomOf="@+id/appCompatImageView2" />
@@ -201,6 +203,7 @@
                             android:id="@+id/attentiveList"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
+
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
