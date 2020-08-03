@@ -114,8 +114,8 @@ class SessionFragment : Fragment() {
         anim.start()
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onPause() {
+        super.onPause()
         viewModel.saveHistory()
         viewModel.saveStudentHistory()
     }

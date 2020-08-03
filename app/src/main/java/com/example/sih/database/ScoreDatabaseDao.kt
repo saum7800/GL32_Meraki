@@ -14,13 +14,10 @@ interface ScoreDatabaseDao {
     @Delete
     fun delete(studentScore: StudentScore)
 
-    @Query("SELECT student_score FROM score_history_table WHERE id = :date ")
+    @Query("SELECT student_score FROM score_history_table WHERE id = :date")
     fun getScoreByDate(date: String) : String
 
-    @Query("SELECT id  FROM score_history_table")
-    fun getDates(): Cursor
-
-    @Query("SELECT id  FROM score_history_table  WHERE id LIKE :date ")
+    @Query("SELECT * FROM score_history_table  WHERE id LIKE :date")
     fun getSimilarDates(date: String): Cursor
 
     @Query("DELETE FROM score_history_table")

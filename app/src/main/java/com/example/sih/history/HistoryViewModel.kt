@@ -121,9 +121,10 @@ class HistoryViewModel(
                 set.enableDashedHighlightLine(10f, 5f, 0f)
                 set.setColors(Color.parseColor("#6200EE"))
                 set.setCircleColor(Color.parseColor("#6200EE"))
+                set.setDrawValues(false)
                 chart.data = LineData(set)
                 val xl = chart.xAxis
-                xl.labelCount = xValues.size
+                xl.labelCount = 10
                 xl.setDrawGridLines(false)
                 xl.setAvoidFirstLastClipping(true)
                 val yl = chart.axisLeft
