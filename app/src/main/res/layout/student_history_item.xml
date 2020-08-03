@@ -43,7 +43,7 @@
                 android:orientation="horizontal"
                 android:layout_gravity="end"
                 android:layout_marginBottom="10dp"
-                android:background="#7011FF00">
+                android:background="#4D11FF00">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
