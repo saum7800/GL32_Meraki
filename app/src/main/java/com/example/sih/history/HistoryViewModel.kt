@@ -12,6 +12,7 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import kotlinx.coroutines.*
+import java.lang.Exception
 
 class HistoryViewModel(
     private val database: ScoreDatabaseDao,
@@ -30,16 +31,22 @@ class HistoryViewModel(
     init {
         uiScope.launch {
             withContext(Dispatchers.IO){
+                try{
                 val cursor = database.getSimilarDates("%$date%")
                 val temp : ArrayList<String> = arrayListOf()
                 temp.add(" ")
-                if(cursor.moveToFirst()){
-                    do{
-                        val student = cursor.getString(cursor.getColumnIndexOrThrow("id"))
-                       temp.add(student)
-                    }while (cursor.moveToNext())
+                if(cursor != null  && cursor.count >0) {
+                    do {
+                        cursor.moveToFirst();
+                        val student = cursor.getString(cursor.getColumnIndex("id"))
+                        if (student != null)
+                            temp.add(student)
+                    } while (cursor.moveToNext())
                     cursor.close()
                     _students.postValue(temp)
+                }
+                }catch(e: Exception){
+
                 }
             }
         }
@@ -48,7 +55,6 @@ class HistoryViewModel(
     fun getScores(date: String){
 
         uiScope.launch {
-
             val xValues : MutableList<String> = mutableListOf()
             val scores : MutableList<Entry> = mutableListOf()
             plotScoresDB(date,xValues,scores)
